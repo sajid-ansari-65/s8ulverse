@@ -1,0 +1,51 @@
+# dependencies
+node_modules
+.pnp
+.pnp.js
+
+# turbo
+.turbo
+
+# next.js
+.next/
+out/
+
+# production
+build
+dist
+
+# env
+.env
+.env.local
+.env*.local
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# claude (local context only, do not commit)
+CLAUDE.md
+
+# misc
+.DS_Store
+*.pem
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# prisma
+packages/db/prisma/*.db
+packages/db/prisma/*.db-journal
+
+# payload / uploads
+/media
+/public/media

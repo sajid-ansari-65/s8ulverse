@@ -1,0 +1,155 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+@layer base {
+  body {
+    background-image:
+      radial-gradient(120% 80% at 50% -10%, rgba(255, 90, 54, 0.10), transparent 60%),
+      radial-gradient(80% 60% at 100% 100%, rgba(255, 146, 72, 0.06), transparent 55%);
+    background-attachment: fixed;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #08080b;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #26262e;
+    border-radius: 999px;
+    border: 2px solid #08080b;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #36363f;
+  }
+}
+
+@layer components {
+  /* Oversized broadcast display lockup */
+  .display {
+    font-family: var(--font-anton), sans-serif;
+    line-height: 0.86;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+  }
+
+  /* Outline / stroked headline word */
+  .text-stroke {
+    -webkit-text-stroke: 1.5px rgba(236, 231, 221, 0.55);
+    color: transparent;
+  }
+
+  /* Broadcast corner framing brackets */
+  .frame {
+    position: relative;
+  }
+  .frame::before,
+  .frame::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: rgba(236, 231, 221, 0.4);
+    pointer-events: none;
+  }
+  .frame::before {
+    top: 0;
+    left: 0;
+    border-top: 1px solid;
+    border-left: 1px solid;
+  }
+  .frame::after {
+    bottom: 0;
+    right: 0;
+    border-bottom: 1px solid;
+    border-right: 1px solid;
+  }
+
+  /* Animated brand gradient, built from the three S8UL logo colors */
+  .brand-text {
+    background-image: linear-gradient(100deg, #0a6ad6, #c2e23f, #ff6a2a, #0a6ad6);
+    background-size: 220% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .brand-rule {
+    background-image: linear-gradient(90deg, #0a6ad6, #c2e23f, #ff6a2a);
+  }
+
+  .hairline {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(236, 231, 221, 0.18) 18%,
+      rgba(236, 231, 221, 0.18) 82%,
+      transparent
+    );
+  }
+}
+
+/* Rich-text body for admin-authored pages (catch-all /[slug]). */
+.prose-page {
+  color: rgb(202 198 190);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+.prose-page > * + * {
+  margin-top: 1.15em;
+}
+.prose-page h2 {
+  font-family: var(--font-anton), sans-serif;
+  font-size: 2rem;
+  line-height: 1.1;
+  color: rgb(236 231 221);
+  margin-top: 2em;
+}
+.prose-page h3 {
+  font-family: var(--font-anton), sans-serif;
+  font-size: 1.5rem;
+  color: rgb(236 231 221);
+  margin-top: 1.6em;
+}
+.prose-page a {
+  color: #ff6a2a;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prose-page strong {
+  color: rgb(236 231 221);
+}
+.prose-page ul,
+.prose-page ol {
+  padding-left: 1.4em;
+}
+.prose-page ul {
+  list-style: disc;
+}
+.prose-page ol {
+  list-style: decimal;
+}
+.prose-page blockquote {
+  border-left: 2px solid #ff6a2a;
+  padding-left: 1.1em;
+  font-style: italic;
+  color: rgb(236 231 221);
+}
+
+@layer utilities {
+  .mask-fade-x {
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+  .mask-fade-b {
+    -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent);
+    mask-image: linear-gradient(180deg, #000 60%, transparent);
+  }
+}

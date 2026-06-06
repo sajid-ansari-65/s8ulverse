@@ -1,0 +1,50 @@
+{
+  "name": "s8ulverse",
+  "version": "0.1.0",
+  "description": "S8ULverse — curated profile hub for S8UL, SouL, 8Bit & 8Bit Creative players and creators.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
+    "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=--no-deprecation next dev",
+    "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
+    "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
+    "lint": "cross-env NODE_OPTIONS=--no-deprecation eslint .",
+    "type-check": "tsc --noEmit",
+    "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
+    "seed": "cross-env NODE_OPTIONS=--no-deprecation tsx src/seed.ts",
+    "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
+    "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap"
+  },
+  "dependencies": {
+    "@payloadcms/db-postgres": "3.85.0",
+    "@payloadcms/next": "3.85.0",
+    "@payloadcms/richtext-lexical": "3.85.0",
+    "@payloadcms/ui": "3.85.0",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5",
+    "graphql": "^16.8.1",
+    "motion": "^12.40.0",
+    "next": "15.3.9",
+    "payload": "3.85.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "sharp": "0.34.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.16.0",
+    "eslint-config-next": "15.3.9",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}
