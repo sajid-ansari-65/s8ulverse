@@ -60,6 +60,11 @@ export default buildConfig({
         Logo: '@/components/admin/Logo',
         Icon: '@/components/admin/Icon',
       },
+      views: {
+        // Replace Payload's default dashboard (a grid that just mirrors the
+        // sidebar) with a real content overview — counts + recent activity.
+        dashboard: { Component: '@/components/admin/Dashboard' },
+      },
     },
   },
   // Content collections first; admin/media utilities last. Content collections

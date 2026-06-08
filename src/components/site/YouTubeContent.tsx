@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
+import { useRef, useState, type ReactNode } from 'react'
 
 import { Reveal } from '@/components/motion/Reveal'
 import { formatNumber } from '@/lib/format'
@@ -20,6 +21,44 @@ const fmtDuration = (s: number) => {
     : `${m}:${String(sec).padStart(2, '0')}`
 }
 
+// ─── Horizontal rail: fixed height, swipe sideways. Edge fades + hover arrows ──
+function Rail({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const nudge = (dir: 1 | -1) =>
+    ref.current?.scrollBy({ left: dir * ref.current.clientWidth * 0.85, behavior: 'smooth' })
+
+  return (
+    <div className="group relative -mx-1">
+      <div
+        ref={ref}
+        className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-1 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {children}
+      </div>
+
+      {/* edge fades */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-ink to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-ink to-transparent" />
+
+      {/* hover arrows (pointer devices only) */}
+      <button
+        aria-label="Scroll left"
+        onClick={() => nudge(-1)}
+        className="absolute left-1 top-1/2 z-10 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-ink/80 text-bone opacity-0 backdrop-blur transition-all hover:border-ember/50 hover:text-ember group-hover:opacity-100 md:flex"
+      >
+        ‹
+      </button>
+      <button
+        aria-label="Scroll right"
+        onClick={() => nudge(1)}
+        className="absolute right-1 top-1/2 z-10 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-ink/80 text-bone opacity-0 backdrop-blur transition-all hover:border-ember/50 hover:text-ember group-hover:opacity-100 md:flex"
+      >
+        ›
+      </button>
+    </div>
+  )
+}
+
 // Landscape long-form / featured / recent card.
 function VideoCard({ v }: { v: YtVideo }) {
   return (
@@ -27,7 +66,7 @@ function VideoCard({ v }: { v: YtVideo }) {
       href={watch(v.id)}
       target="_blank"
       rel="noopener noreferrer"
-      className="group block overflow-hidden rounded-xl border border-line bg-raise/40 transition-colors hover:border-ember/40"
+      className="group/card block snap-start overflow-hidden rounded-xl border border-line bg-raise/40 transition-colors hover:border-ember/40"
     >
       <div className="relative aspect-video overflow-hidden bg-ink-2">
         {v.thumbnail && (
@@ -35,7 +74,7 @@ function VideoCard({ v }: { v: YtVideo }) {
           <img
             src={v.thumbnail}
             alt={v.title}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover/card:scale-105"
           />
         )}
         {v.live ? (
@@ -69,7 +108,7 @@ function ShortCard({ v }: { v: YtVideo }) {
       href={watch(v.id)}
       target="_blank"
       rel="noopener noreferrer"
-      className="group block overflow-hidden rounded-xl border border-line bg-raise/40 transition-colors hover:border-ember/40"
+      className="group/card block snap-start overflow-hidden rounded-xl border border-line bg-raise/40 transition-colors hover:border-ember/40"
     >
       <div className="relative aspect-[9/16] overflow-hidden bg-ink-2">
         {v.thumbnail && (
@@ -77,7 +116,7 @@ function ShortCard({ v }: { v: YtVideo }) {
           <img
             src={v.thumbnail}
             alt={v.title}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover/card:scale-105"
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-transparent to-transparent" />
@@ -116,7 +155,7 @@ function Embed({ v }: { v: YtVideo }) {
 
 type Tab = 'live' | 'featured' | 'videos' | 'shorts'
 
-// One channel: per-channel stats line + Live/Featured/Videos/Shorts tabs.
+// One channel: per-channel stats line + animated Live/Featured/Videos/Shorts tabs.
 function ChannelView({ data }: { data: YtData }) {
   const videos = data.videos ?? []
   const shorts = data.shorts ?? []
@@ -133,6 +172,7 @@ function ChannelView({ data }: { data: YtData }) {
 
   return (
     <>
+      {/* stats line */}
       <div className="mt-5 flex gap-6 font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
         {data.subscribers > 0 && (
           <span>
@@ -150,49 +190,87 @@ function ChannelView({ data }: { data: YtData }) {
         </span>
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-2">
-        {available.map((t) => (
-          <button
-            key={t.key}
-            onClick={() => setTab(t.key)}
-            className={`rounded-full border px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.16em] transition-colors ${
-              tab === t.key
-                ? 'border-ember/40 bg-ember/10 text-ember'
-                : 'border-line text-bone-dim hover:text-bone'
-            }`}
-          >
-            {t.key === 'live' && (
-              <span className="mr-1.5 inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-red-400 align-middle" />
-            )}
-            {t.label}
-            {t.count != null && <span className="ml-1.5 text-faint">{t.count}</span>}
-          </button>
-        ))}
+      {/* animated segmented tab bar */}
+      <div className="mt-6 inline-flex flex-wrap gap-1 rounded-full border border-line bg-raise/30 p-1">
+        {available.map((t) => {
+          const isActive = tab === t.key
+          return (
+            <button
+              key={t.key}
+              onClick={() => setTab(t.key)}
+              className="relative rounded-full px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.16em] transition-colors"
+            >
+              {isActive && (
+                <motion.span
+                  layoutId="yt-active-tab"
+                  className="absolute inset-0 rounded-full border border-ember/40 bg-ember/15"
+                  transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                />
+              )}
+              <span
+                className={`relative z-10 flex items-center transition-colors ${
+                  isActive ? 'text-ember' : 'text-bone-dim hover:text-bone'
+                }`}
+              >
+                {t.key === 'live' && (
+                  <span className="mr-1.5 inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-red-400" />
+                )}
+                {t.label}
+                {t.count != null && (
+                  <span className={`ml-1.5 ${isActive ? 'text-ember/70' : 'text-faint'}`}>
+                    {t.count}
+                  </span>
+                )}
+              </span>
+            </button>
+          )
+        })}
       </div>
 
+      {/* tab panel — fades on switch */}
       <div className="mt-6">
-        {tab === 'live' && data.live && <Embed v={data.live} />}
-        {tab === 'featured' && data.featured && <Embed v={data.featured} />}
-        {tab === 'videos' && (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {videos.slice(0, 9).map((v) => (
-              <VideoCard key={v.id} v={v} />
-            ))}
-          </div>
-        )}
-        {tab === 'shorts' && (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-            {shorts.slice(0, 10).map((v) => (
-              <ShortCard key={v.id} v={v} />
-            ))}
-          </div>
-        )}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={tab}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
+          >
+            {tab === 'live' && data.live && <Embed v={data.live} />}
+            {tab === 'featured' && data.featured && <Embed v={data.featured} />}
+            {tab === 'videos' && (
+              <Rail>
+                {videos.slice(0, 18).map((v) => (
+                  <div key={v.id} className="w-[280px] shrink-0 sm:w-[320px]">
+                    <VideoCard v={v} />
+                  </div>
+                ))}
+              </Rail>
+            )}
+            {tab === 'shorts' && (
+              <Rail>
+                {shorts.map((v) => (
+                  <div key={v.id} className="w-[150px] shrink-0 sm:w-[168px]">
+                    <ShortCard v={v} />
+                  </div>
+                ))}
+              </Rail>
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </>
   )
 }
 
-export function YouTubeContent({ channels }: { channels: YtChannel[] }) {
+export function YouTubeContent({
+  channels,
+  bare = false,
+}: {
+  channels: YtChannel[]
+  bare?: boolean
+}) {
   const [active, setActive] = useState(0)
   if (!channels.length) return null
 
@@ -201,22 +279,22 @@ export function YouTubeContent({ channels }: { channels: YtChannel[] }) {
   const multi = channels.length > 1
 
   return (
-    <section className="mt-20">
-      <Reveal>
-        <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-5">
-          <div>
-            <p className="font-mono text-[11px] uppercase tracking-kicker text-ember">On YouTube</p>
-            <h2 className="display mt-3 text-4xl text-bone">
-              {multi ? 'Channels' : 'Channel'}
-            </h2>
+    <section className={bare ? '' : 'mt-20'}>
+      {!bare && (
+        <Reveal>
+          <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-5">
+            <div>
+              <p className="font-mono text-[11px] uppercase tracking-kicker text-ember">On YouTube</p>
+              <h2 className="display mt-3 text-4xl text-bone">{multi ? 'Channels' : 'Channel'}</h2>
+            </div>
+            {multi && (
+              <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
+                {channels.length} channels
+              </span>
+            )}
           </div>
-          {multi && (
-            <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
-              {channels.length} channels
-            </span>
-          )}
-        </div>
-      </Reveal>
+        </Reveal>
+      )}
 
       {/* Channel switcher (only when >1) */}
       {multi && (

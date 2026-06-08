@@ -15,19 +15,21 @@ const PLATFORM: Record<string, { label: string; color: string }> = {
   OTHER: { label: 'Link', color: '#a6a199' },
 }
 
-export function SocialPresence({ socials }: { socials: Social[] }) {
+export function SocialPresence({ socials, bare = false }: { socials: Social[]; bare?: boolean }) {
   if (!socials.length) return null
 
   return (
-    <section className="mt-20">
-      <Reveal>
-        <p className="font-mono text-[11px] uppercase tracking-kicker text-ember">
-          Across the platforms
-        </p>
-        <h2 className="display mt-3 text-4xl text-bone">Social presence</h2>
-      </Reveal>
+    <section className={bare ? '' : 'mt-20'}>
+      {!bare && (
+        <Reveal>
+          <p className="font-mono text-[11px] uppercase tracking-kicker text-ember">
+            Across the platforms
+          </p>
+          <h2 className="display mt-3 text-4xl text-bone">Social presence</h2>
+        </Reveal>
+      )}
 
-      <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className={`grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 ${bare ? '' : 'mt-8'}`}>
         {socials.map((s, i) => {
           const p = PLATFORM[s.platform] ?? PLATFORM.OTHER
           return (

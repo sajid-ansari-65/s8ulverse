@@ -8,6 +8,7 @@ import { CareerTimeline } from '@/components/site/CareerTimeline'
 import { SocialPresence } from '@/components/site/SocialPresence'
 import { YouTubeContent } from '@/components/site/YouTubeContent'
 import { InstagramFeed } from '@/components/site/InstagramFeed'
+import { ProfileTabs, type ProfileTab } from '@/components/site/ProfileTabs'
 import { Container, Initial, Pill } from '@/components/ui'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { getAllMemberSlugs, getMemberBySlug, getYouTubeChannels } from '@/lib/data'
@@ -85,6 +86,60 @@ export default async function PlayerPage({
   // YouTube — one or more channels (switcher) + admin-curated Instagram posts.
   const ytChannels = await getYouTubeChannels(member)
   const igPosts = (member.instagramPosts ?? []).map((p) => p.url).filter(Boolean)
+
+  // Profile sections are presented as tabs — only those with content appear.
+  const profileTabs: ProfileTab[] = []
+  if ((member.career ?? []).length > 0) {
+    profileTabs.push({
+      key: 'journey',
+      label: 'Journey',
+      content: <CareerTimeline career={member.career ?? []} bare />,
+    })
+  }
+  if (ytChannels.length > 0) {
+    profileTabs.push({
+      key: 'channel',
+      label: 'Channel',
+      content: <YouTubeContent channels={ytChannels} bare />,
+    })
+  }
+  if (igPosts.length > 0) {
+    profileTabs.push({
+      key: 'instagram',
+      label: 'Instagram',
+      content: <InstagramFeed posts={igPosts} bare />,
+    })
+  }
+  if (teams.length > 0) {
+    profileTabs.push({
+      key: 'squads',
+      label: 'Squads',
+      content: (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {teams.map((t, i) => {
+            const gameName = typeof t.game === 'object' && t.game ? t.game.name : null
+            return (
+              <Reveal key={t.id} delay={i * 0.06}>
+                <TiltCard accent={accent} className="rounded-2xl border border-line bg-raise/50 p-6">
+                  <h3 className="display text-2xl text-bone">{t.name}</h3>
+                  <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
+                    {gameName ?? '—'}
+                  </p>
+                </TiltCard>
+              </Reveal>
+            )
+          })}
+        </div>
+      ),
+    })
+  }
+  if ((member.socials ?? []).length > 0) {
+    profileTabs.push({
+      key: 'social',
+      label: 'Social',
+      content: <SocialPresence socials={member.socials ?? []} bare />,
+    })
+  }
 
   return (
     <>
@@ -211,39 +266,7 @@ export default async function PlayerPage({
           </Reveal>
         )}
 
-        <CareerTimeline career={member.career ?? []} />
-
-        {ytChannels.length > 0 && <YouTubeContent channels={ytChannels} />}
-        <InstagramFeed posts={igPosts} />
-
-        {teams.length > 0 && (
-          <section className="mt-20">
-            <Reveal>
-              <p className="font-mono text-[11px] uppercase tracking-kicker text-ember">Squads</p>
-              <h2 className="display mt-3 text-4xl text-bone">Teams</h2>
-            </Reveal>
-            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {teams.map((t, i) => {
-                const gameName = typeof t.game === 'object' && t.game ? t.game.name : null
-                return (
-                  <Reveal key={t.id} delay={i * 0.06}>
-                    <TiltCard
-                      accent={accent}
-                      className="rounded-2xl border border-line bg-raise/50 p-6"
-                    >
-                      <h3 className="display text-2xl text-bone">{t.name}</h3>
-                      <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
-                        {gameName ?? '—'}
-                      </p>
-                    </TiltCard>
-                  </Reveal>
-                )
-              })}
-            </div>
-          </section>
-        )}
-
-        <SocialPresence socials={member.socials ?? []} />
+        {profileTabs.length > 0 && <ProfileTabs tabs={profileTabs} />}
       </Container>
     </>
   )

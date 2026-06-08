@@ -2,17 +2,25 @@ import { Reveal } from '@/components/motion/Reveal'
 import type { CareerEntry } from '@/lib/types'
 
 // Per-person journey — from the day they started, oldest → newest.
-export function CareerTimeline({ career }: { career: CareerEntry[] }) {
+export function CareerTimeline({
+  career,
+  bare = false,
+}: {
+  career: CareerEntry[]
+  bare?: boolean
+}) {
   if (!career.length) return null
 
   return (
-    <section className="mt-20">
-      <Reveal>
-        <p className="font-mono text-[11px] uppercase tracking-kicker text-ember">From day one</p>
-        <h2 className="display mt-3 text-4xl text-bone">Journey</h2>
-      </Reveal>
+    <section className={bare ? '' : 'mt-20'}>
+      {!bare && (
+        <Reveal>
+          <p className="font-mono text-[11px] uppercase tracking-kicker text-ember">From day one</p>
+          <h2 className="display mt-3 text-4xl text-bone">Journey</h2>
+        </Reveal>
+      )}
 
-      <div className="relative mt-8 pl-9 sm:pl-12">
+      <div className={`relative pl-9 sm:pl-12 ${bare ? '' : 'mt-8'}`}>
         <div className="absolute bottom-2 left-0 top-2 w-px bg-gradient-to-b from-brand-blue via-brand-lime to-brand-orange" />
 
         <div className="space-y-8">

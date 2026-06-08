@@ -135,6 +135,12 @@ export default async function HomePage() {
           titles: home.statTitlesLabel,
           reach: home.statReachLabel,
         }}
+        overrides={{
+          members: home.statMembersValue,
+          orgs: home.statOrgsValue,
+          titles: home.statTitlesValue,
+          reach: home.statReachValue,
+        }}
       />
 
       <EwcSection matches={matches} event={event} />

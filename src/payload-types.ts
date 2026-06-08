@@ -1123,9 +1123,13 @@ export interface Homepage {
   heroCtaLabel?: string | null;
   heroCtaHref?: string | null;
   statMembersLabel?: string | null;
+  statMembersValue?: string | null;
   statOrgsLabel?: string | null;
+  statOrgsValue?: string | null;
   statTitlesLabel?: string | null;
+  statTitlesValue?: string | null;
   statReachLabel?: string | null;
+  statReachValue?: string | null;
   orgsKicker?: string | null;
   orgsTitle?: string | null;
   rosterKicker?: string | null;
@@ -1306,9 +1310,13 @@ export interface HomepageSelect<T extends boolean = true> {
   heroCtaLabel?: T;
   heroCtaHref?: T;
   statMembersLabel?: T;
+  statMembersValue?: T;
   statOrgsLabel?: T;
+  statOrgsValue?: T;
   statTitlesLabel?: T;
+  statTitlesValue?: T;
   statReachLabel?: T;
+  statReachValue?: T;
   orgsKicker?: T;
   orgsTitle?: T;
   rosterKicker?: T;

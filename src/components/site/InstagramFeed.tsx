@@ -12,7 +12,7 @@ declare global {
   }
 }
 
-export function InstagramFeed({ posts }: { posts: string[] }) {
+export function InstagramFeed({ posts, bare = false }: { posts: string[]; bare?: boolean }) {
   useEffect(() => {
     const id = 'instagram-embed-js'
     if (!document.getElementById(id)) {
@@ -29,13 +29,15 @@ export function InstagramFeed({ posts }: { posts: string[] }) {
   if (!posts.length) return null
 
   return (
-    <section className="mt-20">
-      <Reveal>
-        <p className="font-mono text-[11px] uppercase tracking-kicker text-ember">On Instagram</p>
-        <h2 className="display mt-3 text-4xl text-bone">Latest posts</h2>
-      </Reveal>
+    <section className={bare ? '' : 'mt-20'}>
+      {!bare && (
+        <Reveal>
+          <p className="font-mono text-[11px] uppercase tracking-kicker text-ember">On Instagram</p>
+          <h2 className="display mt-3 text-4xl text-bone">Latest posts</h2>
+        </Reveal>
+      )}
 
-      <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className={`grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 ${bare ? '' : 'mt-8'}`}>
         {posts.map((url, i) => (
           <blockquote
             key={i}

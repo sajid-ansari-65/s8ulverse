@@ -443,6 +443,11 @@ export interface HomepageContent {
   statOrgsLabel: string
   statTitlesLabel: string
   statReachLabel: string
+  // Optional display overrides — blank means "auto-calculate from content".
+  statMembersValue: string
+  statOrgsValue: string
+  statTitlesValue: string
+  statReachValue: string
   orgsKicker: string
   orgsTitle: string
   rosterKicker: string
@@ -482,6 +487,10 @@ export async function getHomepage(): Promise<HomepageContent> {
     statOrgsLabel: str('statOrgsLabel', 'Organizations'),
     statTitlesLabel: str('statTitlesLabel', 'Titles'),
     statReachLabel: str('statReachLabel', 'Combined reach'),
+    statMembersValue: str('statMembersValue', ''),
+    statOrgsValue: str('statOrgsValue', ''),
+    statTitlesValue: str('statTitlesValue', ''),
+    statReachValue: str('statReachValue', ''),
     orgsKicker: str('orgsKicker', 'The dynasties'),
     orgsTitle: str('orgsTitle', 'Organizations'),
     rosterKicker: str('rosterKicker', 'The faces'),

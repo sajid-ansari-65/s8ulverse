@@ -60,21 +60,39 @@ export const Homepage: GlobalConfig = {
     },
     {
       type: 'collapsible',
-      label: 'Stat labels',
-      admin: { initCollapsed: true },
+      label: 'Stats',
+      admin: {
+        initCollapsed: true,
+        description:
+          'Leave a value blank to auto-calculate from your content (live count, ticks up on scroll). Fill it to show a fixed custom value like “20+” or “13M”.',
+      },
       fields: [
         {
           type: 'row',
           fields: [
-            { name: 'statMembersLabel', type: 'text', defaultValue: 'Players & creators', admin: { width: '50%' } },
-            { name: 'statOrgsLabel', type: 'text', defaultValue: 'Organizations', admin: { width: '50%' } },
+            { name: 'statMembersLabel', type: 'text', label: 'Members label', defaultValue: 'Players & creators', admin: { width: '50%' } },
+            { name: 'statMembersValue', type: 'text', label: 'Members value (override)', admin: { width: '50%', placeholder: 'Auto — live count' } },
           ],
         },
         {
           type: 'row',
           fields: [
-            { name: 'statTitlesLabel', type: 'text', defaultValue: 'Titles', admin: { width: '50%' } },
-            { name: 'statReachLabel', type: 'text', defaultValue: 'Combined reach', admin: { width: '50%' } },
+            { name: 'statOrgsLabel', type: 'text', label: 'Organizations label', defaultValue: 'Organizations', admin: { width: '50%' } },
+            { name: 'statOrgsValue', type: 'text', label: 'Organizations value (override)', admin: { width: '50%', placeholder: 'Auto — live count' } },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'statTitlesLabel', type: 'text', label: 'Titles label', defaultValue: 'Titles', admin: { width: '50%' } },
+            { name: 'statTitlesValue', type: 'text', label: 'Titles value (override)', admin: { width: '50%', placeholder: 'Auto — live count' } },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'statReachLabel', type: 'text', label: 'Reach label', defaultValue: 'Combined reach', admin: { width: '50%' } },
+            { name: 'statReachValue', type: 'text', label: 'Reach value (override)', admin: { width: '50%', placeholder: 'Auto — live sum' } },
           ],
         },
       ],
