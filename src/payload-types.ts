@@ -71,8 +71,10 @@ export interface Config {
     games: Game;
     teams: Team;
     members: Member;
+    tenures: Tenure;
     matches: Match;
     achievements: Achievement;
+    brands: Brand;
     founders: Founder;
     pages: Page;
     media: Media;
@@ -82,14 +84,23 @@ export interface Config {
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    organizations: {
+      roster: 'tenures';
+    };
+    members: {
+      tenures: 'tenures';
+    };
+  };
   collectionsSelect: {
     organizations: OrganizationsSelect<false> | OrganizationsSelect<true>;
     games: GamesSelect<false> | GamesSelect<true>;
     teams: TeamsSelect<false> | TeamsSelect<true>;
     members: MembersSelect<false> | MembersSelect<true>;
+    tenures: TenuresSelect<false> | TenuresSelect<true>;
     matches: MatchesSelect<false> | MatchesSelect<true>;
     achievements: AchievementsSelect<false> | AchievementsSelect<true>;
+    brands: BrandsSelect<false> | BrandsSelect<true>;
     founders: FoundersSelect<false> | FoundersSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
@@ -167,6 +178,14 @@ export interface Organization {
    */
   accentHex?: string | null;
   isVerified?: boolean | null;
+  /**
+   * Everyone who has had a stint at this org (from Tenures).
+   */
+  roster?: {
+    docs?: (number | Tenure)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -190,29 +209,43 @@ export interface Media {
   focalY?: number | null;
 }
 /**
+ * A member’s time at one org. Usually edited from the Member screen.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "games".
+ * via the `definition` "tenures".
  */
-export interface Game {
+export interface Tenure {
   id: number;
-  name: string;
-  slug: string;
-  logo?: (number | null) | Media;
-  bgImage?: (number | null) | Media;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "teams".
- */
-export interface Team {
-  id: number;
-  name: string;
-  slug: string;
+  title?: string | null;
+  member: number | Member;
+  /**
+   * Which family org this stint was with.
+   */
   org: number | Organization;
-  game: number | Game;
-  isActive?: boolean | null;
+  /**
+   * Role during THIS stint.
+   */
+  role: 'PLAYER' | 'CREATOR' | 'COACH' | 'ANALYST' | 'MANAGER' | 'OWNER';
+  /**
+   * Squad/game in that org (optional).
+   */
+  team?: (number | null) | Team;
+  /**
+   * Entry.
+   */
+  joinedAt: string;
+  /**
+   * Exit — leave blank if still current.
+   */
+  leftAt?: string | null;
+  /**
+   * Founded THIS org (day-one).
+   */
+  isFounding?: boolean | null;
+  /**
+   * Context / fuzzy-date note (optional).
+   */
+  note?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -229,7 +262,13 @@ export interface Member {
   ign: string;
   realName?: string | null;
   slug: string;
-  role: 'PLAYER' | 'CREATOR' | 'COACH' | 'ANALYST' | 'OWNER';
+  /**
+   * Current/primary role. Role per stint lives on each Tenure.
+   */
+  role: 'PLAYER' | 'CREATOR' | 'COACH' | 'ANALYST' | 'MANAGER' | 'OWNER';
+  /**
+   * Current/primary org. Full history lives under Affiliations.
+   */
   org: number | Organization;
   /**
    * In-game role — e.g. IGL, Fragger, Duelist, Support.
@@ -238,17 +277,25 @@ export interface Member {
   avatar?: (number | null) | Media;
   banner?: (number | null) | Media;
   bio?: string | null;
-  /**
-   * Squads this member is part of.
-   */
-  teams?: (number | Team)[] | null;
   country?: string | null;
   isVerified?: boolean | null;
   isActive?: boolean | null;
   /**
-   * Joined the S8UL family on…
+   * Joined the S8UL FAMILY on… (family-level; per-org dates live on Tenures).
    */
   joinedAt?: string | null;
+  /**
+   * Each stint at a family org — entry/exit, role, founding. Add a row per org/spell.
+   */
+  tenures?: {
+    docs?: (number | Tenure)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  /**
+   * Current squads (quick display). Historical squads live on each tenure.
+   */
+  teams?: (number | Team)[] | null;
   /**
    * Add one row per platform. Followers are optional.
    */
@@ -323,6 +370,33 @@ export interface Member {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "teams".
+ */
+export interface Team {
+  id: number;
+  name: string;
+  slug: string;
+  org: number | Organization;
+  game: number | Game;
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "games".
+ */
+export interface Game {
+  id: number;
+  name: string;
+  slug: string;
+  logo?: (number | null) | Media;
+  bgImage?: (number | null) | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "matches".
  */
 export interface Match {
@@ -356,7 +430,90 @@ export interface Achievement {
   category?: string | null;
   description?: string | null;
   /**
+   * Team trophy (shown on the org timeline) or an individual award (shown on the player).
+   */
+  type: 'Team' | 'Individual';
+  /**
+   * Result — leave blank for awards (e.g. Personality of the Year).
+   */
+  placement?: ('CHAMPION' | 'RUNNER_UP' | 'TOP_3' | 'QUALIFIED') | null;
+  /**
+   * Which family org won it (optional).
+   */
+  org?: (number | null) | Organization;
+  /**
+   * BGMI / Valorant — blank for non-game awards.
+   */
+  game?: (number | null) | Game;
+  /**
+   * Precise squad, e.g. iQOOSouL BGMI (optional).
+   */
+  team?: (number | null) | Team;
+  /**
+   * Who earned it — the winning roster (Team) or one person (Individual). Empty for org milestones.
+   */
+  members?: (number | Member)[] | null;
+  /**
    * Higher = shown first. Tip: use the year (e.g. 2026) plus a tiebreaker.
+   */
+  sortKey?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Sponsors and brand partners shown on the Partners hub and org pages.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "brands".
+ */
+export interface Brand {
+  id: number;
+  /**
+   * Brand/company — e.g. iQOO, AMD, Monster Energy.
+   */
+  name: string;
+  slug: string;
+  /**
+   * Brand mark.
+   */
+  logo?: (number | null) | Media;
+  category: 'TITLE' | 'SPONSOR' | 'AMBASSADOR' | 'COLLABORATION' | 'MERCH' | 'CAMPAIGN' | 'EVENT';
+  status: 'ACTIVE' | 'PAST';
+  /**
+   * Which family org(s) this deal involves (at least one).
+   */
+  orgs: (number | Organization)[];
+  /**
+   * Players/creators/owners doing the brand work (optional).
+   */
+  members?: (number | Member)[] | null;
+  /**
+   * Scope to a squad — e.g. the squad a Title brand names (iQOO → Team iQOOSouL).
+   */
+  team?: (number | null) | Team;
+  /**
+   * Scope to a discipline when there’s no single team.
+   */
+  game?: (number | null) | Game;
+  /**
+   * Deal start.
+   */
+  startDate?: string | null;
+  /**
+   * Deal end — blank if ongoing.
+   */
+  endDate?: string | null;
+  /**
+   * The partnership in a line or two.
+   */
+  description?: string | null;
+  url?: string | null;
+  /**
+   * Highlight on the hub (wide card).
+   */
+  featured?: boolean | null;
+  /**
+   * Higher = shown first.
    */
   sortKey?: number | null;
   updatedAt: string;
@@ -529,7 +686,7 @@ export interface Page {
 export interface User {
   id: number;
   name?: string | null;
-  role?: ('owner' | 'admin' | 'editor') | null;
+  role?: ('owner' | 'admin' | 'editor' | 'contributor') | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -590,12 +747,20 @@ export interface PayloadLockedDocument {
         value: number | Member;
       } | null)
     | ({
+        relationTo: 'tenures';
+        value: number | Tenure;
+      } | null)
+    | ({
         relationTo: 'matches';
         value: number | Match;
       } | null)
     | ({
         relationTo: 'achievements';
         value: number | Achievement;
+      } | null)
+    | ({
+        relationTo: 'brands';
+        value: number | Brand;
       } | null)
     | ({
         relationTo: 'founders';
@@ -673,6 +838,7 @@ export interface OrganizationsSelect<T extends boolean = true> {
   youtube?: T;
   accentHex?: T;
   isVerified?: T;
+  roster?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -716,11 +882,12 @@ export interface MembersSelect<T extends boolean = true> {
   avatar?: T;
   banner?: T;
   bio?: T;
-  teams?: T;
   country?: T;
   isVerified?: T;
   isActive?: T;
   joinedAt?: T;
+  tenures?: T;
+  teams?: T;
   socials?:
     | T
     | {
@@ -761,6 +928,23 @@ export interface MembersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tenures_select".
+ */
+export interface TenuresSelect<T extends boolean = true> {
+  title?: T;
+  member?: T;
+  org?: T;
+  role?: T;
+  team?: T;
+  joinedAt?: T;
+  leftAt?: T;
+  isFounding?: T;
+  note?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "matches_select".
  */
 export interface MatchesSelect<T extends boolean = true> {
@@ -785,6 +969,35 @@ export interface AchievementsSelect<T extends boolean = true> {
   year?: T;
   category?: T;
   description?: T;
+  type?: T;
+  placement?: T;
+  org?: T;
+  game?: T;
+  team?: T;
+  members?: T;
+  sortKey?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "brands_select".
+ */
+export interface BrandsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  logo?: T;
+  category?: T;
+  status?: T;
+  orgs?: T;
+  members?: T;
+  team?: T;
+  game?: T;
+  startDate?: T;
+  endDate?: T;
+  description?: T;
+  url?: T;
+  featured?: T;
   sortKey?: T;
   updatedAt?: T;
   createdAt?: T;

@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { publicRead, editorUp } from '@/lib/access'
 
 // Header + footer menus, editable from /admin → Globals → Navigation.
 // The public Nav/Footer fall back to sensible defaults when this is empty,
@@ -11,7 +12,8 @@ export const Navigation: GlobalConfig = {
     description: 'Header + footer menus and social links.',
   },
   access: {
-    read: () => true,
+    read: publicRead,
+    update: editorUp,
   },
   fields: [
     {

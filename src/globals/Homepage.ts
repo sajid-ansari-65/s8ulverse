@@ -1,11 +1,12 @@
 import type { GlobalConfig } from 'payload'
+import { publicRead, editorUp } from '@/lib/access'
 
 // All editorial copy on the homepage: hero, stat labels, teaser headings, CTA.
 export const Homepage: GlobalConfig = {
   slug: 'homepage',
   label: 'Homepage',
   admin: { group: 'Settings', description: 'Hero, stat labels, section headings and CTA copy.' },
-  access: { read: () => true },
+  access: { read: publicRead, update: editorUp },
   fields: [
     {
       type: 'collapsible',

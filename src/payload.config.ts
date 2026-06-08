@@ -12,7 +12,9 @@ import { Organizations } from './collections/Organizations'
 import { Games } from './collections/Games'
 import { Teams } from './collections/Teams'
 import { Members } from './collections/Members'
+import { Tenures } from './collections/Tenures'
 import { Achievements } from './collections/Achievements'
+import { Brands } from './collections/Brands'
 import { Founders } from './collections/Founders'
 import { Matches } from './collections/Matches'
 import { Pages } from './collections/Pages'
@@ -75,8 +77,10 @@ export default buildConfig({
     withRevalidate(Games),
     withRevalidate(Teams),
     withRevalidate(Members),
+    withRevalidate(Tenures),
     withRevalidate(Matches),
     withRevalidate(Achievements),
+    withRevalidate(Brands),
     withRevalidate(Founders),
     withRevalidate(Pages),
     withRevalidate(Media),

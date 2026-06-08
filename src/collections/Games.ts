@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { publicRead, editorUp } from '@/lib/access'
 
 // Maps Prisma `Game` (BGMI, Valorant, CoD-M, …).
 export const Games: CollectionConfig = {
@@ -9,7 +10,10 @@ export const Games: CollectionConfig = {
     defaultColumns: ['name', 'slug'],
   },
   access: {
-    read: () => true,
+    read: publicRead,
+    create: editorUp,
+    update: editorUp,
+    delete: editorUp,
   },
   fields: [
     {

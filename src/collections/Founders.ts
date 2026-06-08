@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { publicRead, editorUp } from '@/lib/access'
 
 // The people behind the S8UL family — rendered as the homepage founders strip.
 export const Founders: CollectionConfig = {
@@ -9,7 +10,10 @@ export const Founders: CollectionConfig = {
     defaultColumns: ['name', 'alias', 'role'],
   },
   access: {
-    read: () => true,
+    read: publicRead,
+    create: editorUp,
+    update: editorUp,
+    delete: editorUp,
   },
   defaultSort: 'order',
   fields: [

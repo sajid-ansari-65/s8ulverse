@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { publicRead, editorUp } from '@/lib/access'
 
 // Kicker / title / subtitle for the interior page headers, plus the About story.
 // Each field carries its current copy as a defaultValue, with reader fallbacks.
@@ -20,7 +21,7 @@ export const PageIntros: GlobalConfig = {
   slug: 'page-intros',
   label: 'Page Intros',
   admin: { group: 'Settings', description: 'Headers for the Players / Orgs / EWC / Honours / About pages.' },
-  access: { read: () => true },
+  access: { read: publicRead, update: editorUp },
   fields: [
     {
       name: 'players',

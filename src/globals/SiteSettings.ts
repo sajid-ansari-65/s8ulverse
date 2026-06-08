@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { publicRead, editorUp } from '@/lib/access'
 
 // Brand identity used across the chrome (Nav wordmark, Intro curtain, Footer).
 // Every field has a defaultValue so /admin opens pre-filled and the site never
@@ -7,7 +8,7 @@ export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
   label: 'Site Settings',
   admin: { group: 'Settings', description: 'Brand name, wordmark, tagline and footer details.' },
-  access: { read: () => true },
+  access: { read: publicRead, update: editorUp },
   fields: [
     {
       type: 'row',

@@ -4,6 +4,7 @@ import { Reveal } from '@/components/motion/Reveal'
 import { TiltCard } from '@/components/motion/TiltCard'
 import { Initial, Pill } from '@/components/ui'
 import { formatNumber } from '@/lib/format'
+import { ROLE_LABELS } from '@/lib/labels'
 import { asOrg, mediaUrl, type Member } from '@/lib/types'
 
 // Roster card grid — shared by the homepage teaser and the full /players page.
@@ -44,7 +45,7 @@ export function RosterGrid({ members }: { members: Member[] }) {
                   <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
                   <div className="absolute left-4 top-4 flex gap-2">
                     <Pill variant="ghost" className="bg-ink/50 backdrop-blur">
-                      {m.position ?? m.role}
+                      {m.position ?? ROLE_LABELS[m.role] ?? m.role}
                     </Pill>
                     {m.isVerified && (
                       <Pill variant="ember" className="backdrop-blur">
