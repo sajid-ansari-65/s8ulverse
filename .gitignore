@@ -49,3 +49,4 @@ packages/db/prisma/*.db-journal
 # payload / uploads
 /media
 /public/media
+.env*
