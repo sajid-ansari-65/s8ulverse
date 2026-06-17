@@ -219,9 +219,17 @@ export interface Tenure {
   title?: string | null;
   member: number | Member;
   /**
-   * Which family org this stint was with.
+   * Family org for this stint. Leave blank for an outside club (fill External club below).
    */
-  org: number | Organization;
+  org?: (number | null) | Organization;
+  /**
+   * Name of a NON-family club (e.g. GodLike) when the stint wasn’t at a family org.
+   */
+  externalOrg?: string | null;
+  /**
+   * Optional link for the external club (Liquipedia/official).
+   */
+  externalUrl?: string | null;
   /**
    * Role during THIS stint.
    */
@@ -934,6 +942,8 @@ export interface TenuresSelect<T extends boolean = true> {
   title?: T;
   member?: T;
   org?: T;
+  externalOrg?: T;
+  externalUrl?: T;
   role?: T;
   team?: T;
   joinedAt?: T;

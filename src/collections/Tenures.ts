@@ -43,6 +43,9 @@ const setTenureTitle: CollectionBeforeChangeHook = async ({ data, req }) => {
         req,
       })
       if (o?.name) parts.push(o.name)
+    } else if (typeof data.externalOrg === 'string' && data.externalOrg) {
+      // Stint at a non-family club (no Organization record) — use its plain name.
+      parts.push(data.externalOrg)
     }
   } catch {
     /* relationship not resolvable yet — fall through with what we have */
@@ -97,9 +100,40 @@ export const Tenures: CollectionConfig = {
           name: 'org',
           type: 'relationship',
           relationTo: 'organizations',
-          required: true,
           index: true,
-          admin: { width: '50%', description: 'Which family org this stint was with.' },
+          admin: {
+            width: '50%',
+            description: 'Family org for this stint. Leave blank for an outside club (fill External club below).',
+          },
+        },
+      ],
+    },
+    {
+      type: 'row',
+      fields: [
+        {
+          name: 'externalOrg',
+          type: 'text',
+          admin: {
+            width: '50%',
+            description: 'Name of a NON-family club (e.g. GodLike) when the stint wasn’t at a family org.',
+          },
+          // Every stint must belong to exactly one place: a family org OR a named
+          // external club. Validate here so an orgless tenure can't be saved.
+          validate: (value: string | null | undefined, { siblingData }: { siblingData: { org?: unknown } }) => {
+            if (!value && !siblingData?.org) return 'Set a family org or an external club name.'
+            if (value && siblingData?.org) return 'Pick ONE: a family org or an external club — not both.'
+            return true
+          },
+        },
+        {
+          name: 'externalUrl',
+          type: 'text',
+          admin: {
+            width: '50%',
+            description: 'Optional link for the external club (Liquipedia/official).',
+            condition: (_, siblingData) => Boolean((siblingData as { externalOrg?: string })?.externalOrg),
+          },
         },
       ],
     },

@@ -80,7 +80,9 @@ export interface Member {
 export interface Tenure {
   id?: string
   member: Member | string
-  org: Org | string
+  org?: Org | string | null // blank when the stint was at a non-family club
+  externalOrg?: string | null // name of an outside club (no Organization record)
+  externalUrl?: string | null
   team?: TeamDoc | string | null
   role: string
   joinedAt: string // ISO; render month+year

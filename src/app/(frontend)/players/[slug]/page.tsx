@@ -3,17 +3,17 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { Reveal } from '@/components/motion/Reveal'
-import { TiltCard } from '@/components/motion/TiltCard'
 import { CareerTimeline } from '@/components/site/CareerTimeline'
+import { TenureTimeline } from '@/components/site/TenureTimeline'
 import { SocialPresence } from '@/components/site/SocialPresence'
 import { YouTubeContent } from '@/components/site/YouTubeContent'
 import { InstagramFeed } from '@/components/site/InstagramFeed'
 import { ProfileTabs, type ProfileTab } from '@/components/site/ProfileTabs'
 import { Container, Initial, Pill } from '@/components/ui'
 import { JsonLd } from '@/components/seo/JsonLd'
-import { getAllMemberSlugs, getMemberBySlug, getYouTubeChannels } from '@/lib/data'
+import { getAllMemberSlugs, getMemberBySlug, getMemberTenures, getYouTubeChannels } from '@/lib/data'
 import { formatDate } from '@/lib/format'
-import { asOrg, mediaUrl, type TeamDoc } from '@/lib/types'
+import { asOrg, mediaUrl } from '@/lib/types'
 
 export const revalidate = 3600
 export const dynamicParams = true
@@ -79,16 +79,24 @@ export default async function PlayerPage({
   const accent = org?.accentHex ?? '#ff5a36'
   const avatar = mediaUrl(member.avatar)
   const banner = mediaUrl(member.banner)
-  const teams = (member.teams ?? []).filter(
-    (t): t is TeamDoc => typeof t === 'object' && t !== null,
-  )
 
   // YouTube — one or more channels (switcher) + admin-curated Instagram posts.
-  const ytChannels = await getYouTubeChannels(member)
+  const [ytChannels, tenures] = await Promise.all([
+    getYouTubeChannels(member),
+    getMemberTenures(member.id),
+  ])
   const igPosts = (member.instagramPosts ?? []).map((p) => p.url).filter(Boolean)
 
   // Profile sections are presented as tabs — only those with content appear.
   const profileTabs: ProfileTab[] = []
+  // Factual multi-org stint history (every era, both orgs for shared players).
+  if (tenures.length > 0) {
+    profileTabs.push({
+      key: 'career',
+      label: 'Career',
+      content: <TenureTimeline tenures={tenures} bare />,
+    })
+  }
   if ((member.career ?? []).length > 0) {
     profileTabs.push({
       key: 'journey',
@@ -108,29 +116,6 @@ export default async function PlayerPage({
       key: 'instagram',
       label: 'Instagram',
       content: <InstagramFeed posts={igPosts} bare />,
-    })
-  }
-  if (teams.length > 0) {
-    profileTabs.push({
-      key: 'squads',
-      label: 'Squads',
-      content: (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {teams.map((t, i) => {
-            const gameName = typeof t.game === 'object' && t.game ? t.game.name : null
-            return (
-              <Reveal key={t.id} delay={i * 0.06}>
-                <TiltCard accent={accent} className="rounded-2xl border border-line bg-raise/50 p-6">
-                  <h3 className="display text-2xl text-bone">{t.name}</h3>
-                  <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
-                    {gameName ?? '—'}
-                  </p>
-                </TiltCard>
-              </Reveal>
-            )
-          })}
-        </div>
-      ),
     })
   }
   if ((member.socials ?? []).length > 0) {
