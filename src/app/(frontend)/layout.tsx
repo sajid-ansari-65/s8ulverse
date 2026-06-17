@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Anton, Hanken_Grotesk, JetBrains_Mono } from 'next/font/google'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import React from 'react'
 
 import { Atmosphere } from '@/components/site/Atmosphere'
@@ -88,6 +89,7 @@ export default async function FrontendLayout({ children }: { children: React.Rea
         <SiteNav links={nav.header} wordmark={site.wordmarkSuffix} />
         <main className="relative z-10">{children}</main>
         <SiteFooter nav={nav} site={site} />
+        <SpeedInsights />
       </body>
     </html>
   )
