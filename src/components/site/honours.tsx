@@ -29,7 +29,7 @@ export function PlacementPill({ placement }: { placement?: string | null }) {
 export function TrophyCount({ count }: { count: number }) {
   if (count <= 0) return null
   return (
-    <span className="inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-[0.14em] text-ember">
+    <span className="inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-[0.14em] text-accent">
       🏆 {count}
     </span>
   )

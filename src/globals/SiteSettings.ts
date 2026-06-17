@@ -29,6 +29,12 @@ export const SiteSettings: GlobalConfig = {
       admin: { description: 'Shown in the intro curtain and footer baseline.' },
     },
     {
+      name: 'contactEmail',
+      type: 'text',
+      defaultValue: 'hello@idara.studio',
+      admin: { description: 'Public contact for the Privacy page / data requests.' },
+    },
+    {
       type: 'row',
       fields: [
         {

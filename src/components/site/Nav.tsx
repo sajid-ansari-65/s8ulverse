@@ -55,8 +55,12 @@ export function SiteNav({ links, wordmark }: { links?: NavLink[]; wordmark?: str
             alt="S8UL"
             className="h-8 w-auto transition-transform duration-300 group-hover:scale-105"
           />
-          <span className="display text-2xl tracking-tight text-ember">{wordmark ?? 'VERSE'}</span>
-          <span className="ml-0.5 inline-block h-1.5 w-1.5 rounded-full bg-ember transition-transform group-hover:scale-150" />
+          <span className="display text-2xl tracking-tight text-accent">{wordmark ?? 'VERSE'}</span>
+          {/* live-season indicator — pulses to signal the active 2026/27 season */}
+          <span className="relative ml-0.5 flex h-1.5 w-1.5" title="Live season 2026/27">
+            <span className="absolute inline-flex h-full w-full animate-livepulse rounded-full bg-accent" />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-8 font-mono text-[11px] uppercase tracking-[0.2em] sm:flex">
@@ -74,7 +78,7 @@ export function SiteNav({ links, wordmark }: { links?: NavLink[]; wordmark?: str
               >
                 {item.label}
                 <span
-                  className={`absolute -bottom-1.5 left-0 h-px bg-ember transition-all duration-300 ${
+                  className={`absolute -bottom-1.5 left-0 h-px bg-accent transition-all duration-300 ${
                     on ? 'w-full' : 'w-0'
                   }`}
                 />
@@ -127,10 +131,10 @@ export function SiteNav({ links, wordmark }: { links?: NavLink[]; wordmark?: str
                 target={isExternal(item.href) ? '_blank' : undefined}
                 rel={isExternal(item.href) ? 'noopener noreferrer' : undefined}
                 className={`flex items-center gap-2 border-b border-line/60 py-4 transition-colors ${
-                  on ? 'text-ember' : 'text-bone-dim hover:text-bone'
+                  on ? 'text-accent' : 'text-bone-dim hover:text-bone'
                 }`}
               >
-                {on && <span className="h-1 w-1 rounded-full bg-ember" />}
+                {on && <span className="h-1 w-1 rounded-full bg-accent" />}
                 {item.label}
               </Link>
             )

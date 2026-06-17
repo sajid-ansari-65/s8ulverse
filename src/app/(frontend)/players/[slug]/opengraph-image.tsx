@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
 
 import { getMemberBySlug } from '@/lib/data'
-import { asOrg } from '@/lib/types'
+import { asOrg, orgKit } from '@/lib/types'
 
 export const alt = 'S8ULverse player profile'
 export const size = { width: 1200, height: 630 }
@@ -12,7 +12,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   const { slug } = await params
   const member = await getMemberBySlug(slug)
   const org = member ? asOrg(member.org) : null
-  const accent = org?.accentHex ?? '#ff6a2a'
+  const accent = orgKit(org).primary
   const ign = (member?.ign ?? 'S8ULverse').toUpperCase()
   const eyebrow = [member?.role, member?.position].filter(Boolean).join(' · ') || 'S8ULVERSE'
 

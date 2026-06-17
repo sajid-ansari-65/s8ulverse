@@ -121,6 +121,52 @@ export const Homepage: GlobalConfig = {
     },
     {
       type: 'collapsible',
+      label: 'Kit showcase',
+      admin: {
+        initCollapsed: true,
+        description: 'The 2026/27 jerseys + sponsor wall. Colours render the jersey card.',
+      },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            { name: 'kitKicker', type: 'text', defaultValue: 'The 2026/27 threads', admin: { width: '50%' } },
+            { name: 'kitTitle', type: 'text', defaultValue: 'This season’s kits', admin: { width: '50%' } },
+          ],
+        },
+        {
+          name: 'kits',
+          type: 'array',
+          label: 'Jerseys',
+          admin: { description: 'One card per kit. Leave empty to use the built-in family defaults.' },
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                { name: 'org', type: 'text', required: true, admin: { width: '50%', description: 'e.g. S8UL' } },
+                { name: 'kitName', type: 'text', admin: { width: '50%', description: 'e.g. EWC 2026' } },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'primary', type: 'text', defaultValue: '#1b6fff', admin: { width: '50%', description: 'Primary hex' } },
+                { name: 'secondary', type: 'text', defaultValue: '#f4f7ff', admin: { width: '50%', description: 'Secondary hex' } },
+              ],
+            },
+          ],
+        },
+        {
+          name: 'sponsors',
+          type: 'array',
+          label: 'Sponsor wall',
+          admin: { description: 'Partner names (iQOO, Campa, AMD Ryzen AI). Defaults used if empty.' },
+          fields: [{ name: 'name', type: 'text', required: true }],
+        },
+      ],
+    },
+    {
+      type: 'collapsible',
       label: 'Closing CTA',
       admin: { initCollapsed: true },
       fields: [

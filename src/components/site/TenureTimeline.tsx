@@ -4,7 +4,7 @@ import { Reveal } from '@/components/motion/Reveal'
 import { Pill } from '@/components/ui'
 import { formatTenureRange } from '@/lib/format'
 import { ROLE_LABELS } from '@/lib/labels'
-import { asOrg, asTeam, type Tenure } from '@/lib/types'
+import { asOrg, asTeam, orgKit, type Tenure } from '@/lib/types'
 
 // Factual per-org stint history (entry → exit), oldest → newest — the multi-org
 // career. A single player who passed through more than one org (e.g. 8Bit → SouL)
@@ -17,13 +17,13 @@ export function TenureTimeline({ tenures, bare = false }: { tenures: Tenure[]; b
     <section className={bare ? '' : 'mt-20'}>
       {!bare && (
         <Reveal>
-          <p className="font-mono text-[11px] uppercase tracking-kicker text-ember">Every era</p>
+          <p className="font-mono text-[11px] uppercase tracking-kicker text-accent">Every era</p>
           <h2 className="display mt-3 text-4xl text-bone">Career</h2>
         </Reveal>
       )}
 
       <div className={`relative pl-9 sm:pl-12 ${bare ? '' : 'mt-8'}`}>
-        <div className="absolute bottom-2 left-0 top-2 w-px bg-gradient-to-b from-brand-blue via-brand-lime to-brand-orange" />
+        <div className="absolute bottom-2 left-0 top-2 w-px bg-gradient-to-b from-kit-blue via-kit-green to-kit-white" />
 
         <div className="space-y-8">
           {tenures.map((t, i) => {
@@ -31,7 +31,7 @@ export function TenureTimeline({ tenures, bare = false }: { tenures: Tenure[]; b
             const team = asTeam(t.team)
             // External (non-family) club: no Organization record, just a name + maybe a link.
             const external = !org && t.externalOrg ? t.externalOrg : null
-            const accent = org?.accentHex ?? (external ? '#5a5a66' : '#ff5a36')
+            const accent = external ? '#5a5a66' : orgKit(org).primary
             const isCurrent = !t.leftAt
             const roleLabel = ROLE_LABELS[t.role] ?? t.role
             const year = (t.joinedAt ?? '').slice(0, 4)
@@ -50,7 +50,7 @@ export function TenureTimeline({ tenures, bare = false }: { tenures: Tenure[]; b
                         {org ? (
                           <Link
                             href={`/orgs/${org.slug}`}
-                            className="text-lg font-semibold text-bone transition-colors hover:text-ember"
+                            className="text-lg font-semibold text-bone transition-colors hover:text-accent"
                           >
                             {org.name}
                           </Link>

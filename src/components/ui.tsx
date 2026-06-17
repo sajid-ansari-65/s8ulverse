@@ -24,7 +24,7 @@ export function SectionHeading({
   return (
     <div className="flex items-end justify-between gap-6 border-b border-line pb-5">
       <div>
-        <p className="font-mono text-[11px] uppercase tracking-kicker text-ember">{kicker}</p>
+        <p className="font-mono text-[11px] uppercase tracking-kicker text-accent">{kicker}</p>
         <h2 className="display mt-3 text-4xl text-bone sm:text-6xl">{title}</h2>
       </div>
       {index && (
@@ -36,12 +36,15 @@ export function SectionHeading({
   )
 }
 
-type PillVariant = 'ember' | 'ghost' | 'solid'
+// 'ember' kept as the variant name (used across the site) but now renders in the
+// active kit accent (--kit-primary) — blue by default, org-themed inside .kit-theme.
+type PillVariant = 'ember' | 'ghost' | 'solid' | 'metal'
 
 const pill: Record<PillVariant, string> = {
-  ember: 'border border-ember/30 bg-ember/10 text-ember',
+  ember: 'border border-accent/40 bg-accent/10 text-accent',
   ghost: 'border border-line text-bone-dim',
   solid: 'bg-bone text-ink',
+  metal: 'border border-accent-metal/40 bg-accent-metal/10 text-accent-metal',
 }
 
 export function Pill({

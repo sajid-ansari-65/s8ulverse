@@ -14,7 +14,7 @@ type Match = {
 
 const statusStyle: Record<Match['status'], string> = {
   LIVE: 'border-red-500/40 bg-red-500/10 text-red-400',
-  UPCOMING: 'border-ember/30 bg-ember/10 text-ember',
+  UPCOMING: 'border-accent/30 bg-accent/10 text-accent',
   COMPLETED: 'border-line text-faint',
 }
 
@@ -38,7 +38,7 @@ export function EwcSection({ matches, event }: { matches: Match[]; event: Featur
           <div className="relative h-full overflow-hidden rounded-2xl border border-line bg-raise/50 p-8">
             <div
               aria-hidden
-              className="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-ember/15 blur-3xl"
+              className="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-accent/15 blur-3xl"
             />
             <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-faint">
               {event.location} · {event.prize} prize pool

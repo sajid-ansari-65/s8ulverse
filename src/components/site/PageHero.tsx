@@ -17,7 +17,7 @@ export function PageHero({
     <section className="relative overflow-hidden pt-36 sm:pt-44">
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -left-[8%] top-[12%] h-[34vw] w-[34vw] animate-aurora rounded-full bg-brand-blue/15 blur-[100px]" />
-        <div className="absolute right-[2%] top-[6%] h-[28vw] w-[28vw] animate-aurora rounded-full bg-brand-orange/15 blur-[100px] [animation-delay:-7s]" />
+        <div className="absolute right-[2%] top-[6%] h-[28vw] w-[28vw] animate-aurora rounded-full bg-kit-green/15 blur-[100px] [animation-delay:-7s]" />
       </div>
 
       {ghost && (
@@ -27,7 +27,7 @@ export function PageHero({
       )}
 
       <Container className="relative">
-        <p className="font-mono text-[11px] uppercase tracking-kicker text-ember">{kicker}</p>
+        <p className="font-mono text-[11px] uppercase tracking-kicker text-accent">{kicker}</p>
         <h1 className="display mt-4 text-6xl leading-[0.9] text-bone sm:text-8xl">{title}</h1>
         {subtitle && (
           <p className="mt-5 max-w-2xl text-lg leading-relaxed text-bone-dim">{subtitle}</p>

@@ -5,7 +5,7 @@ import { TiltCard } from '@/components/motion/TiltCard'
 import { Initial, Pill } from '@/components/ui'
 import { formatNumber } from '@/lib/format'
 import { ROLE_LABELS } from '@/lib/labels'
-import { asOrg, mediaUrl, type Member } from '@/lib/types'
+import { asOrg, mediaUrl, orgKit, type Member } from '@/lib/types'
 
 // Roster card grid — shared by the homepage teaser and the full /players page.
 export function RosterGrid({ members }: { members: Member[] }) {
@@ -21,7 +21,7 @@ export function RosterGrid({ members }: { members: Member[] }) {
     <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
       {members.map((m, i) => {
         const org = asOrg(m.org)
-        const accent = org?.accentHex ?? '#ff5a36'
+        const accent = orgKit(org).primary
         const avatar = mediaUrl(m.avatar)
         const top = m.socials?.[0]
         return (
@@ -63,8 +63,11 @@ export function RosterGrid({ members }: { members: Member[] }) {
                     </p>
                     <div className="grid grid-rows-[0fr] transition-all duration-500 ease-out group-hover:mt-2 group-hover:grid-rows-[1fr]">
                       <div className="overflow-hidden">
-                        <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-ember opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-                          <span className="h-px w-5 bg-ember" /> View profile →
+                        <span
+                          className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                          style={{ color: accent }}
+                        >
+                          <span className="h-px w-5" style={{ backgroundColor: accent }} /> View profile →
                         </span>
                       </div>
                     </div>

@@ -2,6 +2,7 @@ import { getPayloadClient } from './payload'
 import {
   asOrg,
   mediaUrl,
+  orgKit,
   type Achievement,
   type Brand,
   type Member,
@@ -408,7 +409,7 @@ export async function getLiveCreators(): Promise<LiveCreator[]> {
         slug: m.slug,
         ign: m.ign,
         avatar: mediaUrl(m.avatar),
-        accent: org?.accentHex ?? '#ff5a36',
+        accent: orgKit(org).primary,
         org: org?.shortName ?? org?.name ?? null,
         video: status.video,
         channelUrl: status.channelUrl,
@@ -437,6 +438,7 @@ export interface SiteSettings {
   tagline: string
   location: string
   copyrightName: string
+  contactEmail: string
   familyOrgs: string[]
   seo: {
     metaTitleDefault: string
@@ -472,6 +474,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     tagline: str('tagline', 'Where legends live.'),
     location: str('location', 'Surat · India'),
     copyrightName: str('copyrightName', 'S8ULverse'),
+    contactEmail: str('contactEmail', 'hello@idara.studio'),
     familyOrgs: orgs.length ? orgs : ['S8UL', 'SouL', '8Bit', '8Bit Creative'],
     seo: {
       metaTitleDefault: str('metaTitleDefault', 'S8ULverse — Where legends live'),
@@ -586,6 +589,10 @@ export interface HomepageContent {
   orgsTitle: string
   rosterKicker: string
   rosterTitle: string
+  kitKicker: string
+  kitTitle: string
+  kits: { org: string; kitName: string; primary: string; secondary: string }[]
+  sponsors: string[]
   ctaEyebrow: string
   ctaTitle: string
   ctaPrimaryLabel: string
@@ -629,6 +636,31 @@ export async function getHomepage(): Promise<HomepageContent> {
     orgsTitle: str('orgsTitle', 'Organizations'),
     rosterKicker: str('rosterKicker', 'The faces'),
     rosterTitle: str('rosterTitle', 'Featured roster'),
+    kitKicker: str('kitKicker', 'The 2026/27 threads'),
+    kitTitle: str('kitTitle', 'This season’s kits'),
+    kits: (() => {
+      const arr = (h.kits as { org?: string; kitName?: string; primary?: string; secondary?: string }[] | undefined)
+        ?.filter((k) => k.org)
+        .map((k) => ({
+          org: k.org as string,
+          kitName: k.kitName || '',
+          primary: k.primary || '#1b6fff',
+          secondary: k.secondary || '#f4f7ff',
+        }))
+      return arr?.length
+        ? arr
+        : [
+            { org: 'S8UL', kitName: 'EWC 2026', primary: '#1b6fff', secondary: '#f4f7ff' },
+            { org: 'Team SouL', kitName: 'BMPS 2026', primary: '#1b6fff', secondary: '#f4f7ff' },
+            { org: '8Bit', kitName: 'BMPS 2026', primary: '#1b6fff', secondary: '#f4f7ff' },
+          ]
+    })(),
+    sponsors: (() => {
+      const arr = (h.sponsors as { name?: string }[] | undefined)
+        ?.map((s) => s.name)
+        .filter((n): n is string => Boolean(n))
+      return arr?.length ? arr : ['iQOO', 'Campa', 'AMD Ryzen AI']
+    })(),
     ctaEyebrow: str('ctaEyebrow', 'One family · four banners'),
     ctaTitle: str('ctaTitle', 'Explore the universe of S8UL'),
     ctaPrimaryLabel: str('ctaPrimaryLabel', 'Browse the roster →'),

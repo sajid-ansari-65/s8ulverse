@@ -1,5 +1,6 @@
 // Lightweight view-models for the public site. Kept independent of the
 // generated `payload-types.ts` so pages stay decoupled from the CMS internals.
+import type { CSSProperties } from 'react'
 
 export interface MediaDoc {
   url?: string | null
@@ -15,6 +16,11 @@ export interface Org {
   founded?: number | null
   isVerified?: boolean
   accentHex?: string | null
+  // 2026/27 kit palette (see Organizations collection). Optional — falls back to
+  // accentHex / the family blue via orgKit().
+  kitPrimary?: string | null
+  kitSecondary?: string | null
+  kitMetal?: string | null
   logo?: MediaDoc | string | null
   // Org detail header (G2) — these columns already exist on the collection.
   banner?: MediaDoc | string | null
@@ -22,6 +28,56 @@ export interface Org {
   twitter?: string | null
   instagram?: string | null
   youtube?: string | null
+}
+
+// Family defaults — the shared 2026/27 white+electric-blue identity.
+export const FAMILY_KIT = {
+  primary: '#1b6fff',
+  secondary: '#f4f7ff',
+  metal: '#d4af37',
+} as const
+
+export interface Kit {
+  primary: string
+  secondary: string
+  metal: string
+}
+
+// Resolve an org's kit palette with graceful fallback: explicit kit colours →
+// legacy accentHex (as primary) → family blue. Returns the trio used to set the
+// --kit-* CSS vars on a .kit-theme subtree.
+export function orgKit(org?: Pick<Org, 'kitPrimary' | 'kitSecondary' | 'kitMetal' | 'accentHex'> | null): Kit {
+  return {
+    primary: org?.kitPrimary || org?.accentHex || FAMILY_KIT.primary,
+    secondary: org?.kitSecondary || FAMILY_KIT.secondary,
+    metal: org?.kitMetal || FAMILY_KIT.metal,
+  }
+}
+
+// "#1b6fff" → "27 111 255" (space-separated channels for rgb()/<alpha-value>).
+// Accepts #rgb or #rrggbb; returns '' for anything else (token then falls back).
+export function hexToRgbChannels(hex?: string | null): string {
+  if (!hex) return ''
+  let h = hex.trim().replace(/^#/, '')
+  if (h.length === 3) h = h.split('').map((c) => c + c).join('')
+  if (!/^[0-9a-fA-F]{6}$/.test(h)) return ''
+  const n = parseInt(h, 16)
+  return `${(n >> 16) & 255} ${(n >> 8) & 255} ${n & 255}`
+}
+
+// Inline style object that themes a subtree to a kit. Sets BOTH the hex vars
+// (for color-mix/.metal-text/inline) and the "-rgb" channel vars (for the
+// Tailwind accent tokens, so opacity modifiers like bg-accent/10 work). Spread
+// onto a wrapper's `style`.
+export function kitVars(kit: Kit): CSSProperties {
+  return {
+    ['--kit-primary' as string]: kit.primary,
+    ['--kit-secondary' as string]: kit.secondary,
+    ['--kit-metal' as string]: kit.metal,
+    ['--kit-primary-rgb' as string]: hexToRgbChannels(kit.primary),
+    ['--kit-secondary-rgb' as string]: hexToRgbChannels(kit.secondary),
+    ['--kit-metal-rgb' as string]: hexToRgbChannels(kit.metal),
+  }
 }
 
 export interface Social {

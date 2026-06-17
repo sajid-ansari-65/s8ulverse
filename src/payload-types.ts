@@ -174,10 +174,22 @@ export interface Organization {
   instagram?: string | null;
   youtube?: string | null;
   /**
-   * Hex accent used on the public profile.
+   * Legacy single accent (fallback if no kit colours).
    */
   accentHex?: string | null;
   isVerified?: boolean | null;
+  /**
+   * Primary (electric blue)
+   */
+  kitPrimary?: string | null;
+  /**
+   * Secondary (kit white)
+   */
+  kitSecondary?: string | null;
+  /**
+   * Heritage / metal accent
+   */
+  kitMetal?: string | null;
   /**
    * Everyone who has had a stint at this org (from Tenures).
    */
@@ -846,6 +858,9 @@ export interface OrganizationsSelect<T extends boolean = true> {
   youtube?: T;
   accentHex?: T;
   isVerified?: T;
+  kitPrimary?: T;
+  kitSecondary?: T;
+  kitMetal?: T;
   roster?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1215,6 +1230,10 @@ export interface SiteSetting {
    */
   tagline?: string | null;
   /**
+   * Public contact for the Privacy page / data requests.
+   */
+  contactEmail?: string | null;
+  /**
    * Footer location line.
    */
   location?: string | null;
@@ -1357,6 +1376,41 @@ export interface Homepage {
   orgsTitle?: string | null;
   rosterKicker?: string | null;
   rosterTitle?: string | null;
+  kitKicker?: string | null;
+  kitTitle?: string | null;
+  /**
+   * One card per kit. Leave empty to use the built-in family defaults.
+   */
+  kits?:
+    | {
+        /**
+         * e.g. S8UL
+         */
+        org: string;
+        /**
+         * e.g. EWC 2026
+         */
+        kitName?: string | null;
+        /**
+         * Primary hex
+         */
+        primary?: string | null;
+        /**
+         * Secondary hex
+         */
+        secondary?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Partner names (iQOO, Campa, AMD Ryzen AI). Defaults used if empty.
+   */
+  sponsors?:
+    | {
+        name: string;
+        id?: string | null;
+      }[]
+    | null;
   ctaEyebrow?: string | null;
   ctaTitle?: string | null;
   ctaPrimaryLabel?: string | null;
@@ -1447,6 +1501,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   siteName?: T;
   wordmarkSuffix?: T;
   tagline?: T;
+  contactEmail?: T;
   location?: T;
   copyrightName?: T;
   familyOrgs?:
@@ -1544,6 +1599,23 @@ export interface HomepageSelect<T extends boolean = true> {
   orgsTitle?: T;
   rosterKicker?: T;
   rosterTitle?: T;
+  kitKicker?: T;
+  kitTitle?: T;
+  kits?:
+    | T
+    | {
+        org?: T;
+        kitName?: T;
+        primary?: T;
+        secondary?: T;
+        id?: T;
+      };
+  sponsors?:
+    | T
+    | {
+        name?: T;
+        id?: T;
+      };
   ctaEyebrow?: T;
   ctaTitle?: T;
   ctaPrimaryLabel?: T;

@@ -5,12 +5,16 @@ import { Hero } from '@/components/site/Hero'
 import { StatsBand } from '@/components/site/StatsBand'
 import { EwcSection } from '@/components/site/EwcSection'
 import { LiveNowSection } from '@/components/site/LiveNowSection'
+import { MatchTicker, type TickerItem } from '@/components/site/MatchTicker'
+import { TrophyWall } from '@/components/site/TrophyWall'
+import { KitShowcase } from '@/components/site/KitShowcase'
 import { OrgsGrid } from '@/components/site/OrgsGrid'
 import { RosterGrid } from '@/components/site/RosterGrid'
 import { Reveal } from '@/components/motion/Reveal'
 import { Container } from '@/components/ui'
 import { JsonLd } from '@/components/seo/JsonLd'
 import {
+  getAchievements,
   getAllOrgs,
   getFeaturedEvent,
   getFeaturedMembers,
@@ -41,12 +45,12 @@ function TeaserHeading({
   return (
     <div className="flex items-end justify-between gap-6 border-b border-line pb-5">
       <div>
-        <p className="font-mono text-[11px] uppercase tracking-kicker text-ember">{kicker}</p>
+        <p className="font-mono text-[11px] uppercase tracking-kicker text-accent">{kicker}</p>
         <h2 className="display mt-3 text-4xl text-bone sm:text-6xl">{title}</h2>
       </div>
       <Link
         href={href}
-        className="group shrink-0 font-mono text-[11px] uppercase tracking-[0.2em] text-bone-dim transition-colors hover:text-ember"
+        className="group shrink-0 font-mono text-[11px] uppercase tracking-[0.2em] text-bone-dim transition-colors hover:text-accent"
       >
         {cta}{' '}
         <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
@@ -56,7 +60,7 @@ function TeaserHeading({
 }
 
 export default async function HomePage() {
-  const [orgs, members, stats, matches, home, event, site, nav] = await Promise.all([
+  const [orgs, members, stats, matches, home, event, site, nav, achievements] = await Promise.all([
     getAllOrgs(),
     getFeaturedMembers(),
     getRosterStats(),
@@ -65,8 +69,24 @@ export default async function HomePage() {
     getFeaturedEvent(),
     getSiteSettings(),
     getNavigation(),
+    getAchievements(),
   ])
   const orgNames = orgs.length ? orgs.map((o) => o.shortName ?? o.name) : site.familyOrgs
+
+  // Broadcast ticker — newest title (gold) + live/upcoming fixtures + featured event.
+  const tickerItems: TickerItem[] = [
+    ...(achievements[0]
+      ? [{ label: achievements[0].title, sub: achievements[0].year, status: 'champion' as const }]
+      : []),
+    ...matches.slice(0, 5).map((m) => ({
+      label: `vs ${m.opponent}`,
+      sub: m.competition ?? m.event ?? undefined,
+      status: (m.status === 'LIVE' ? 'live' : 'upcoming') as TickerItem['status'],
+    })),
+    ...(event?.title
+      ? [{ label: event.title, sub: event.dateRangeLabel, status: 'upcoming' as const }]
+      : []),
+  ]
 
   return (
     <>
@@ -118,6 +138,9 @@ export default async function HomePage() {
         }}
       />
 
+      {/* Broadcast results/schedule strip — season at a glance. */}
+      <MatchTicker items={tickerItems} />
+
       {/* Streamed: the YouTube live-check is slow + external, so it must not
           block the page's first paint. Renders nothing until someone is live. */}
       <Suspense fallback={null}>
@@ -143,7 +166,13 @@ export default async function HomePage() {
         }}
       />
 
+      {/* TROPHY WALL — the cabinet, led by the latest title in gold foil. */}
+      <TrophyWall achievements={achievements} />
+
       <EwcSection matches={matches} event={event} />
+
+      {/* KIT SHOWCASE + sponsor wall */}
+      <KitShowcase kicker={home.kitKicker} title={home.kitTitle} kits={home.kits} sponsors={home.sponsors} />
 
       {/* ORGS TEASER */}
       <Container className="pt-28">
@@ -175,15 +204,9 @@ export default async function HomePage() {
       <Container className="pt-28">
         <Reveal>
           <div className="relative overflow-hidden rounded-3xl border border-line bg-raise/40 px-8 py-16 text-center sm:py-20">
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-0 opacity-60"
-              style={{
-                background:
-                  'radial-gradient(60% 80% at 50% 0%, rgba(255,106,42,0.18), transparent 60%)',
-              }}
-            />
-            <p className="relative font-mono text-[11px] uppercase tracking-kicker text-ember">
+            <div aria-hidden className="kit-mesh pointer-events-none absolute inset-0 opacity-70" />
+            <div aria-hidden className="grain pointer-events-none absolute inset-0" />
+            <p className="relative font-mono text-[11px] uppercase tracking-kicker text-accent">
               {home.ctaEyebrow}
             </p>
             <h2 className="relative mx-auto mt-5 max-w-3xl text-balance display text-5xl leading-[0.95] text-bone sm:text-7xl">
@@ -192,7 +215,7 @@ export default async function HomePage() {
             <div className="relative mt-10 flex flex-wrap items-center justify-center gap-4 font-mono text-[11px] uppercase tracking-[0.2em]">
               <Link
                 href={home.ctaPrimaryHref}
-                className="rounded-full bg-ember px-6 py-3 text-ink transition-transform hover:scale-105"
+                className="rounded-full bg-accent px-6 py-3 text-ink transition-transform hover:scale-105"
               >
                 {home.ctaPrimaryLabel}
               </Link>

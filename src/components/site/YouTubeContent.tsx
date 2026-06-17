@@ -44,14 +44,14 @@ function Rail({ children }: { children: ReactNode }) {
       <button
         aria-label="Scroll left"
         onClick={() => nudge(-1)}
-        className="absolute left-1 top-1/2 z-10 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-ink/80 text-bone opacity-0 backdrop-blur transition-all hover:border-ember/50 hover:text-ember group-hover:opacity-100 md:flex"
+        className="absolute left-1 top-1/2 z-10 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-ink/80 text-bone opacity-0 backdrop-blur transition-all hover:border-accent/50 hover:text-accent group-hover:opacity-100 md:flex"
       >
         ‹
       </button>
       <button
         aria-label="Scroll right"
         onClick={() => nudge(1)}
-        className="absolute right-1 top-1/2 z-10 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-ink/80 text-bone opacity-0 backdrop-blur transition-all hover:border-ember/50 hover:text-ember group-hover:opacity-100 md:flex"
+        className="absolute right-1 top-1/2 z-10 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-ink/80 text-bone opacity-0 backdrop-blur transition-all hover:border-accent/50 hover:text-accent group-hover:opacity-100 md:flex"
       >
         ›
       </button>
@@ -66,7 +66,7 @@ function VideoCard({ v }: { v: YtVideo }) {
       href={watch(v.id)}
       target="_blank"
       rel="noopener noreferrer"
-      className="group/card block snap-start overflow-hidden rounded-xl border border-line bg-raise/40 transition-colors hover:border-ember/40"
+      className="group/card block snap-start overflow-hidden rounded-xl border border-line bg-raise/40 transition-colors hover:border-accent/40"
     >
       <div className="relative aspect-video overflow-hidden bg-ink-2">
         {v.thumbnail && (
@@ -108,7 +108,7 @@ function ShortCard({ v }: { v: YtVideo }) {
       href={watch(v.id)}
       target="_blank"
       rel="noopener noreferrer"
-      className="group/card block snap-start overflow-hidden rounded-xl border border-line bg-raise/40 transition-colors hover:border-ember/40"
+      className="group/card block snap-start overflow-hidden rounded-xl border border-line bg-raise/40 transition-colors hover:border-accent/40"
     >
       <div className="relative aspect-[9/16] overflow-hidden bg-ink-2">
         {v.thumbnail && (
@@ -120,7 +120,7 @@ function ShortCard({ v }: { v: YtVideo }) {
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-transparent to-transparent" />
-        <span className="absolute left-2 top-2 rounded bg-ink/70 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.16em] text-ember backdrop-blur">
+        <span className="absolute left-2 top-2 rounded bg-ink/70 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.16em] text-accent backdrop-blur">
           Short
         </span>
         <div className="absolute inset-x-3 bottom-3">
@@ -203,13 +203,13 @@ function ChannelView({ data }: { data: YtData }) {
               {isActive && (
                 <motion.span
                   layoutId="yt-active-tab"
-                  className="absolute inset-0 rounded-full border border-ember/40 bg-ember/15"
+                  className="absolute inset-0 rounded-full border border-accent/40 bg-accent/15"
                   transition={{ type: 'spring', stiffness: 420, damping: 34 }}
                 />
               )}
               <span
                 className={`relative z-10 flex items-center transition-colors ${
-                  isActive ? 'text-ember' : 'text-bone-dim hover:text-bone'
+                  isActive ? 'text-accent' : 'text-bone-dim hover:text-bone'
                 }`}
               >
                 {t.key === 'live' && (
@@ -217,7 +217,7 @@ function ChannelView({ data }: { data: YtData }) {
                 )}
                 {t.label}
                 {t.count != null && (
-                  <span className={`ml-1.5 ${isActive ? 'text-ember/70' : 'text-faint'}`}>
+                  <span className={`ml-1.5 ${isActive ? 'text-accent/70' : 'text-faint'}`}>
                     {t.count}
                   </span>
                 )}
@@ -284,7 +284,7 @@ export function YouTubeContent({
         <Reveal>
           <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-5">
             <div>
-              <p className="font-mono text-[11px] uppercase tracking-kicker text-ember">On YouTube</p>
+              <p className="font-mono text-[11px] uppercase tracking-kicker text-accent">On YouTube</p>
               <h2 className="display mt-3 text-4xl text-bone">{multi ? 'Channels' : 'Channel'}</h2>
             </div>
             {multi && (

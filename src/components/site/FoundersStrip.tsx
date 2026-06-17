@@ -39,7 +39,7 @@ export function FoundersStrip({
           return (
             <Reveal key={f.id} delay={(i % 4) * 0.06}>
               <TiltCard
-                accent="#ff6a2a"
+                accent="#1b6fff"
                 className="h-full overflow-hidden rounded-2xl border border-line bg-raise/50"
                 max={6}
               >
@@ -48,12 +48,12 @@ export function FoundersStrip({
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={img} alt={f.name} className="h-full w-full object-cover" />
                   ) : (
-                    <Initial label={f.alias || f.name} accent="#ff6a2a" className="h-full w-full" />
+                    <Initial label={f.alias || f.name} accent="#1b6fff" className="h-full w-full" />
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
                   <div className="absolute inset-x-4 bottom-4">
                     {f.alias && (
-                      <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ember">
+                      <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-accent">
                         {f.alias}
                       </p>
                     )}

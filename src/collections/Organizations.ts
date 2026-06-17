@@ -63,9 +63,45 @@ export const Organizations: CollectionConfig = {
           name: 'accentHex',
           type: 'text',
           defaultValue: '#f59e0b',
-          admin: { width: '50%', description: 'Hex accent used on the public profile.' },
+          admin: { width: '50%', description: 'Legacy single accent (fallback if no kit colours).' },
         },
         { name: 'isVerified', type: 'checkbox', defaultValue: false, admin: { width: '50%' } },
+      ],
+    },
+    {
+      // 2026/27 kit palette — drives the per-org theming across the public site
+      // (--kit-primary / --kit-secondary / --kit-metal). Primary is the shared
+      // family blue; metal is the org's heritage accent (SouL gold, 8Bit violet).
+      type: 'collapsible',
+      label: 'Kit colours (2026/27)',
+      admin: {
+        initCollapsed: true,
+        description: 'Jersey-derived palette. Leave blank to fall back to the legacy accent.',
+      },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'kitPrimary',
+              type: 'text',
+              defaultValue: '#1b6fff',
+              admin: { width: '33%', description: 'Primary (electric blue)' },
+            },
+            {
+              name: 'kitSecondary',
+              type: 'text',
+              defaultValue: '#f4f7ff',
+              admin: { width: '33%', description: 'Secondary (kit white)' },
+            },
+            {
+              name: 'kitMetal',
+              type: 'text',
+              defaultValue: '#d4af37',
+              admin: { width: '33%', description: 'Heritage / metal accent' },
+            },
+          ],
+        },
       ],
     },
     {

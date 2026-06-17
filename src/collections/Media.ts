@@ -21,8 +21,8 @@ export const Media: CollectionConfig = {
       required: true,
     },
   ],
-  // Restrict uploads to images (P7) — blocks non-image file types. A byte-size
-  // cap is a server/Next body-limit concern (deploy-time), not an upload option.
+  // Restrict uploads to images (P7) — blocks non-image file types. The byte-size
+  // cap is enforced globally via config.upload.limits.fileSize (payload.config).
   upload: {
     mimeTypes: ['image/*'],
   },

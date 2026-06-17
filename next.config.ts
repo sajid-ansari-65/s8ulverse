@@ -16,6 +16,12 @@ const cspReportOnly = [
   "connect-src 'self' https:",
   "base-uri 'self'",
   "form-action 'self'",
+  // Lock down a few high-value directives now (these never break a normal site):
+  "object-src 'none'",
+  "frame-ancestors 'self'",
+  // Capture would-be violations at /csp-report so we can tighten toward an
+  // enforcing policy (drop 'unsafe-inline'/'unsafe-eval') once the report is clean.
+  'report-uri /csp-report',
 ].join('; ')
 
 // Baseline security headers (P4). HSTS only in prod (HTTPS).

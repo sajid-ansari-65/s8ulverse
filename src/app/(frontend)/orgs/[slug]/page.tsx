@@ -9,7 +9,7 @@ import { JsonLd } from '@/components/seo/JsonLd'
 import { Container, Initial, Pill } from '@/components/ui'
 import { getAllOrgSlugs, getOrgAchievements, getOrgBySlug, getOrgRoster } from '@/lib/data'
 import { groupRoster, memberHonourMap, splitHonours } from '@/lib/roster'
-import { mediaUrl } from '@/lib/types'
+import { kitVars, mediaUrl, orgKit } from '@/lib/types'
 
 export const revalidate = 3600
 export const dynamicParams = true
@@ -54,7 +54,10 @@ export default async function OrgPage({ params }: { params: Promise<{ slug: stri
 
   const [roster, orgAch] = await Promise.all([getOrgRoster(org.id), getOrgAchievements(org.id)])
 
-  const accent = org.accentHex ?? '#ff5a36'
+  // The org's 2026/27 kit drives the whole page (--kit-* via the wrapper below);
+  // `accent` (= kit primary) is still passed to roster/honours components.
+  const kit = orgKit(org)
+  const accent = kit.primary
   const banner = mediaUrl(org.banner)
   const logo = mediaUrl(org.logo)
 
@@ -118,6 +121,8 @@ export default async function OrgPage({ params }: { params: Promise<{ slug: stri
         }}
       />
 
+      {/* Everything below is themed to this org's kit via --kit-* vars. */}
+      <div style={kitVars(kit)}>
       {/* CINEMATIC HEADER */}
       <header className="relative min-h-[72svh] w-full overflow-hidden">
         <div className="absolute inset-0">
@@ -134,6 +139,8 @@ export default async function OrgPage({ params }: { params: Promise<{ slug: stri
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-ink/20" />
           <div className="absolute inset-0 bg-gradient-to-r from-ink/80 via-transparent to-transparent" />
+          <div aria-hidden className="jersey-stripe absolute inset-0 opacity-30 mask-fade-b" />
+          <div aria-hidden className="grain absolute inset-0" />
         </div>
 
         <span className="display text-stroke pointer-events-none absolute -right-4 top-24 hidden whitespace-nowrap text-[20vw] leading-none opacity-[0.07] lg:block">
@@ -178,7 +185,7 @@ export default async function OrgPage({ params }: { params: Promise<{ slug: stri
                       href={s.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-bone-dim transition-colors hover:text-ember"
+                      className="text-bone-dim transition-colors hover:text-accent"
                     >
                       {s.label} ↗
                     </a>
@@ -194,11 +201,11 @@ export default async function OrgPage({ params }: { params: Promise<{ slug: stri
       <div className="sticky top-0 z-20 border-y border-line bg-ink/85 backdrop-blur">
         <Container>
           <nav className="flex gap-6 py-3 font-mono text-[11px] uppercase tracking-[0.18em]">
-            <a href="#roster" className="text-bone-dim transition-colors hover:text-ember">
+            <a href="#roster" className="text-bone-dim transition-colors hover:text-accent">
               Roster
             </a>
             {teamHonours.length > 0 && (
-              <a href="#honours" className="text-bone-dim transition-colors hover:text-ember">
+              <a href="#honours" className="text-bone-dim transition-colors hover:text-accent">
                 Honours
               </a>
             )}
@@ -230,7 +237,7 @@ export default async function OrgPage({ params }: { params: Promise<{ slug: stri
                 {i > 0 && ' · '}
                 <Link
                   href={`/players/${o.member.slug}`}
-                  className="text-bone-dim transition-colors hover:text-ember"
+                  className="text-bone-dim transition-colors hover:text-accent"
                 >
                   {o.member.ign}
                 </Link>
@@ -248,6 +255,7 @@ export default async function OrgPage({ params }: { params: Promise<{ slug: stri
 
         <OrgHonours honours={teamHonours} accent={accent} />
       </Container>
+      </div>
     </>
   )
 }

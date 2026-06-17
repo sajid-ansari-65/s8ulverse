@@ -116,6 +116,10 @@ const run = async () => {
     name: 'S8UL',
     shortName: 'S8UL',
     accentHex: '#e63946',
+    // EWC 2026 kit — white + electric blue, iQOO-green spark
+    kitPrimary: '#1b6fff',
+    kitSecondary: '#f4f7ff',
+    kitMetal: '#16c79a',
     founded: 2022,
     isVerified: true,
     logo: s8ulLogo,
@@ -129,6 +133,11 @@ const run = async () => {
     name: 'Team SouL',
     shortName: 'SouL',
     accentHex: '#ffd700',
+    // 2026/27 merch matches the S8UL kit (white + electric blue); gold heritage
+    // metal for the BGIS 2026 championship.
+    kitPrimary: '#1b6fff',
+    kitSecondary: '#f4f7ff',
+    kitMetal: '#d4af37',
     founded: 2018,
     isVerified: true,
     description:
@@ -139,6 +148,10 @@ const run = async () => {
     name: '8Bit',
     shortName: '8Bit',
     accentHex: '#3b82f6',
+    // Shared family blue/white; violet heritage metal (8Bit brand colour)
+    kitPrimary: '#1b6fff',
+    kitSecondary: '#f4f7ff',
+    kitMetal: '#6d28d9',
     founded: 2018,
     isVerified: true,
     description:
@@ -148,6 +161,10 @@ const run = async () => {
     name: '8Bit Creative',
     shortName: '8Bit Creative',
     accentHex: '#ec4899',
+    // Shared family blue/white; silver heritage metal (creator arm)
+    kitPrimary: '#1b6fff',
+    kitSecondary: '#f4f7ff',
+    kitMetal: '#c8ccd4',
     founded: 2020,
     isVerified: true,
     description: 'The talent and creator management arm of the S8UL family.',

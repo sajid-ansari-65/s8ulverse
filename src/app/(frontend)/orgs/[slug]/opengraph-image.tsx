@@ -2,6 +2,7 @@ import { ImageResponse } from 'next/og'
 
 import { getOrgAchievements, getOrgBySlug, getOrgRoster } from '@/lib/data'
 import { groupRoster, splitHonours } from '@/lib/roster'
+import { orgKit } from '@/lib/types'
 
 export const alt = 'S8ULverse — organization legacy'
 export const size = { width: 1200, height: 630 }
@@ -13,7 +14,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   const org = await getOrgBySlug(slug)
 
   const name = org?.name ?? 'S8ULverse'
-  const accent = org?.accentHex ?? '#ff6a2a'
+  const accent = orgKit(org).primary
   let members = 0
   let titles = 0
   if (org) {

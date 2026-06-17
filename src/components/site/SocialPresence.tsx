@@ -11,7 +11,7 @@ const PLATFORM: Record<string, { label: string; color: string }> = {
   DISCORD: { label: 'Discord', color: '#5865f2' },
   TIKTOK: { label: 'TikTok', color: '#25f4ee' },
   SNAPCHAT: { label: 'Snapchat', color: '#fffc00' },
-  WEBSITE: { label: 'Website', color: '#ff6a2a' },
+  WEBSITE: { label: 'Website', color: '#1b6fff' },
   OTHER: { label: 'Link', color: '#a6a199' },
 }
 
@@ -22,7 +22,7 @@ export function SocialPresence({ socials, bare = false }: { socials: Social[]; b
     <section className={bare ? '' : 'mt-20'}>
       {!bare && (
         <Reveal>
-          <p className="font-mono text-[11px] uppercase tracking-kicker text-ember">
+          <p className="font-mono text-[11px] uppercase tracking-kicker text-accent">
             Across the platforms
           </p>
           <h2 className="display mt-3 text-4xl text-bone">Social presence</h2>
@@ -38,7 +38,7 @@ export function SocialPresence({ socials, bare = false }: { socials: Social[]; b
                 href={s.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex h-full items-center justify-between gap-4 rounded-2xl border border-line bg-raise/50 p-5 transition-colors hover:border-ember/40"
+                className="group flex h-full items-center justify-between gap-4 rounded-2xl border border-line bg-raise/50 p-5 transition-colors hover:border-accent/40"
               >
                 <div className="flex min-w-0 items-center gap-3">
                   <span
@@ -61,7 +61,7 @@ export function SocialPresence({ socials, bare = false }: { socials: Social[]; b
                       </p>
                     </>
                   ) : (
-                    <span className="font-mono text-[11px] text-ember opacity-0 transition-opacity group-hover:opacity-100">
+                    <span className="font-mono text-[11px] text-accent opacity-0 transition-opacity group-hover:opacity-100">
                       visit →
                     </span>
                   )}

@@ -49,7 +49,47 @@ const connectionString =
   process.env.DIRECT_URL ||
   ''
 
+// Public origin — used to pin CORS/CSRF (so the auth-cookie API can't be driven
+// from another origin) and as Payload's serverURL.
+const siteURL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+
+// Origins allowed to make credentialed API calls. Always our canonical site;
+// plus the deployment's own URL on Vercel (so the admin works on *.vercel.app
+// preview builds, whose origin isn't NEXT_PUBLIC_SITE_URL); plus localhost in dev.
+const allowedOrigins = [
+  siteURL,
+  process.env.VERCEL_PROJECT_PRODUCTION_URL && `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`,
+  process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}`,
+  !isProd && 'http://localhost:3000',
+].filter((o): o is string => Boolean(o))
+
+// Auth tokens are signed with this; an empty secret means predictable tokens →
+// auth bypass. Fail loudly in production rather than booting insecure.
+const payloadSecret = process.env.PAYLOAD_SECRET || ''
+if (isProd && !payloadSecret) {
+  throw new Error(
+    'PAYLOAD_SECRET is required in production. Set it in the environment (openssl rand -base64 32).',
+  )
+}
+
 export default buildConfig({
+  serverURL: siteURL,
+  // Lock the REST/GraphQL API + auth cookies to known origins. Without this,
+  // Payload's permissive defaults let another site issue credentialed requests
+  // (CSRF / cookie-driven calls).
+  cors: allowedOrigins,
+  csrf: allowedOrigins,
+  // GraphQL is public-read by design, but never expose the playground (schema
+  // explorer / mutation console) on production.
+  graphQL: {
+    disablePlaygroundInProduction: true,
+  },
+  // Global upload ceiling — caps every file write so a (compromised) contributor
+  // can't exhaust Blob storage/bandwidth with huge files. 5 MB covers logos,
+  // avatars and banners comfortably.
+  upload: {
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
+  },
   admin: {
     user: Users.slug,
     importMap: {
@@ -91,7 +131,7 @@ export default buildConfig({
     withGlobalRevalidate,
   ),
   editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: payloadSecret,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
@@ -101,11 +141,15 @@ export default buildConfig({
     push: !isProd,
     pool: {
       connectionString,
-      // Session pooler (dev/migrate) tolerates a larger pool on one process;
-      // the transaction pooler (prod serverless) wants it small since every
+      // Supabase's SESSION pooler (dev/migrate, DIRECT_URL) caps total clients at
+      // 15. Next's static-path generation spawns several worker PROCESSES, each
+      // opening its OWN pool — so a big per-pool max multiplies fast and trips
+      // EMAXCONNSESSION. Keep it small (3) so even ~4 workers stay under 15.
+      // The transaction pooler (prod serverless) also wants it small since every
       // Vercel function instance opens its own pool.
-      max: useDirect ? 10 : 5,
-      idleTimeoutMillis: 20_000,
+      max: useDirect ? 3 : 5,
+      // Release idle connections quickly so worker pools don't pile up.
+      idleTimeoutMillis: 10_000,
       connectionTimeoutMillis: 10_000,
     },
   }),

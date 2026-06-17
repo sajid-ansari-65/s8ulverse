@@ -77,7 +77,7 @@ function CtaView({ b }: { b: Block }) {
             }}
           />
           {b.eyebrow ? (
-            <p className="relative font-mono text-[11px] uppercase tracking-kicker text-ember">
+            <p className="relative font-mono text-[11px] uppercase tracking-kicker text-accent">
               {b.eyebrow as string}
             </p>
           ) : null}
@@ -88,7 +88,7 @@ function CtaView({ b }: { b: Block }) {
             {b.primaryLabel && b.primaryHref ? (
               <Link
                 href={b.primaryHref as string}
-                className="rounded-full bg-ember px-6 py-3 text-ink transition-transform hover:scale-105"
+                className="rounded-full bg-accent px-6 py-3 text-ink transition-transform hover:scale-105"
               >
                 {b.primaryLabel as string}
               </Link>

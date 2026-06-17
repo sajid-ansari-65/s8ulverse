@@ -69,7 +69,7 @@ export function LiveNow({ creators }: { creators: LiveCreator[] }) {
                   )}
                 </span>
                 <div className="min-w-0">
-                  <p className="truncate font-mono text-[11px] uppercase tracking-[0.16em] text-ember">
+                  <p className="truncate font-mono text-[11px] uppercase tracking-[0.16em] text-accent">
                     {c.ign}
                     {c.org && <span className="text-faint"> · {c.org}</span>}
                   </p>
@@ -84,7 +84,7 @@ export function LiveNow({ creators }: { creators: LiveCreator[] }) {
       <div className="mt-5">
         <Link
           href="/players"
-          className="font-mono text-[11px] uppercase tracking-[0.2em] text-bone-dim transition-colors hover:text-ember"
+          className="font-mono text-[11px] uppercase tracking-[0.2em] text-bone-dim transition-colors hover:text-accent"
         >
           All creators →
         </Link>

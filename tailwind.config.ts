@@ -14,15 +14,33 @@ export default {
         bone: '#ece7dd',
         'bone-dim': '#a6a199',
         faint: '#6a665e',
-        // primary accent = the S8UL logo's orange
+        // 2026/27 kit identity — S8UL EWC + SouL merch converge on white+electric-blue.
+        // This blue is now the lead family accent across the site.
+        kit: {
+          blue: '#1b6fff',
+          white: '#f4f7ff',
+          green: '#16c79a', // iQOO green spark
+          gold: '#d4af37', // SouL heritage / championship metal
+          violet: '#6d28d9', // 8Bit heritage
+          silver: '#c8ccd4',
+        },
+        // ember (old logo orange) demoted to a minor legacy spark — kept so any
+        // lingering reference still resolves, but no longer the lead.
         ember: '#ff6a2a',
         'ember-2': '#ff9a4d',
-        // the rest of the logo triad — used for the brand gradient
+        // the S8UL logo triad — still used for the brand wordmark gradient
         brand: {
           blue: '#0a6ad6',
           lime: '#c2e23f',
           orange: '#ff6a2a',
         },
+        // CSS-var driven accent — a section sets the --kit-*-rgb channel vars
+        // (via kitVars()) and these resolve to the active org's kit colours.
+        // Stored as "R G B" channels (not hex) so Tailwind opacity modifiers
+        // like bg-accent/10 work — a hex var would make them emit no CSS.
+        accent: 'rgb(var(--kit-primary-rgb, 27 111 255) / <alpha-value>)',
+        'accent-2': 'rgb(var(--kit-secondary-rgb, 244 247 255) / <alpha-value>)',
+        'accent-metal': 'rgb(var(--kit-metal-rgb, 212 175 55) / <alpha-value>)',
       },
       fontFamily: {
         display: ['var(--font-anton)', 'ui-sans-serif', 'sans-serif'],
@@ -50,6 +68,16 @@ export default {
           '33%': { transform: 'translate3d(6%,-4%,0) scale(1.15)' },
           '66%': { transform: 'translate3d(-5%,5%,0) scale(0.92)' },
         },
+        // gold/silver foil sweep for championship type (.metal-text)
+        foil: {
+          '0%,100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+        },
+        // soft pulse for the live-season status dot
+        livepulse: {
+          '0%,100%': { opacity: '1', transform: 'scale(1)' },
+          '50%': { opacity: '0.35', transform: 'scale(0.8)' },
+        },
       },
       animation: {
         marquee: 'marquee 38s linear infinite',
@@ -57,6 +85,8 @@ export default {
         gradient: 'gradient 7s ease infinite',
         aurora: 'aurora 18s ease-in-out infinite',
         'spin-slow': 'spin 9s linear infinite',
+        foil: 'foil 6s ease infinite',
+        livepulse: 'livepulse 1.6s ease-in-out infinite',
       },
     },
   },

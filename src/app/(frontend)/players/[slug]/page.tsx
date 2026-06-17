@@ -13,7 +13,7 @@ import { Container, Initial, Pill } from '@/components/ui'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { getAllMemberSlugs, getMemberBySlug, getMemberTenures, getYouTubeChannels } from '@/lib/data'
 import { formatDate } from '@/lib/format'
-import { asOrg, mediaUrl } from '@/lib/types'
+import { asOrg, kitVars, mediaUrl, orgKit } from '@/lib/types'
 
 export const revalidate = 3600
 export const dynamicParams = true
@@ -76,7 +76,8 @@ export default async function PlayerPage({
   if (!member) notFound()
 
   const org = asOrg(member.org)
-  const accent = org?.accentHex ?? '#ff5a36'
+  const kit = orgKit(org)
+  const accent = kit.primary
   const avatar = mediaUrl(member.avatar)
   const banner = mediaUrl(member.banner)
 
@@ -127,7 +128,7 @@ export default async function PlayerPage({
   }
 
   return (
-    <>
+    <div style={kitVars(kit)}>
       <JsonLd
         data={{
           '@context': 'https://schema.org',
@@ -224,7 +225,7 @@ export default async function PlayerPage({
                     href={s.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-bone-dim transition-colors hover:text-ember"
+                    className="text-bone-dim transition-colors hover:text-accent"
                   >
                     {s.platform.toLowerCase()} ↗
                   </a>
@@ -253,6 +254,6 @@ export default async function PlayerPage({
 
         {profileTabs.length > 0 && <ProfileTabs tabs={profileTabs} />}
       </Container>
-    </>
+    </div>
   )
 }

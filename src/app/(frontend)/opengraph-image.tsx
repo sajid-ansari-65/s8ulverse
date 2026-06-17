@@ -29,7 +29,7 @@ export default function Image() {
             fontSize: 24,
             letterSpacing: 10,
             textTransform: 'uppercase',
-            color: '#ff6a2a',
+            color: '#1b6fff',
           }}
         >
           S8UL · SouL · 8Bit · 8Bit Creative
@@ -45,7 +45,7 @@ export default function Image() {
               fontSize: 150,
               fontWeight: 800,
               lineHeight: 0.92,
-              color: '#ff6a2a',
+              color: '#1b6fff',
             }}
           >
             LEGENDS LIVE

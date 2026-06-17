@@ -32,7 +32,7 @@ export function InstagramFeed({ posts, bare = false }: { posts: string[]; bare?:
     <section className={bare ? '' : 'mt-20'}>
       {!bare && (
         <Reveal>
-          <p className="font-mono text-[11px] uppercase tracking-kicker text-ember">On Instagram</p>
+          <p className="font-mono text-[11px] uppercase tracking-kicker text-accent">On Instagram</p>
           <h2 className="display mt-3 text-4xl text-bone">Latest posts</h2>
         </Reveal>
       )}

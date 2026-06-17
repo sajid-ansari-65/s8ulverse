@@ -80,7 +80,7 @@ export default async function FrontendLayout({ children }: { children: React.Rea
       suppressHydrationWarning
     >
       <body
-        className="relative min-h-screen overflow-x-hidden bg-ink font-sans text-bone antialiased selection:bg-ember selection:text-ink"
+        className="relative min-h-screen overflow-x-hidden bg-ink font-sans text-bone antialiased selection:bg-accent selection:text-ink"
         suppressHydrationWarning
       >
         <Intro wordmark={site.wordmarkSuffix} tagline={site.tagline.replace(/\.$/, '')} />

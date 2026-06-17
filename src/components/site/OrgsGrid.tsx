@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { Reveal } from '@/components/motion/Reveal'
 import { TiltCard } from '@/components/motion/TiltCard'
 import { Pill } from '@/components/ui'
-import type { Org } from '@/lib/types'
+import { orgKit, type Org } from '@/lib/types'
 
 // Organizations grid — the first card spans wide with a conic-gradient glow.
 // Shared by the homepage teaser and the full /orgs page.
@@ -19,7 +19,8 @@ export function OrgsGrid({ orgs }: { orgs: Org[] }) {
   return (
     <div className="mt-10 grid grid-cols-1 gap-5 lg:grid-cols-3">
       {orgs.map((org, i) => {
-        const accent = org.accentHex ?? '#ff5a36'
+        const kit = orgKit(org)
+        const accent = kit.primary
         const featured = i === 0
         return (
           <Reveal key={org.id} delay={i * 0.06} className={featured ? 'lg:col-span-2' : ''}>
@@ -29,7 +30,7 @@ export function OrgsGrid({ orgs }: { orgs: Org[] }) {
                   aria-hidden
                   className="absolute -inset-2 animate-spin-slow rounded-[20px] opacity-50 blur-xl"
                   style={{
-                    background: 'conic-gradient(from 0deg, #0a6ad6, #c2e23f, #ff6a2a, #0a6ad6)',
+                    background: `conic-gradient(from 0deg, ${accent}, ${kit.metal}, ${kit.secondary}, ${accent})`,
                   }}
                 />
               )}
@@ -61,7 +62,10 @@ export function OrgsGrid({ orgs }: { orgs: Org[] }) {
                 <div className="mt-6 flex items-center gap-4 font-mono text-[11px] uppercase tracking-[0.18em] text-faint">
                   {org.shortName && <span>{org.shortName}</span>}
                   {org.founded && <span>Est. {org.founded}</span>}
-                  <span className="text-ember opacity-0 transition-opacity group-hover:opacity-100">
+                  <span
+                    className="opacity-0 transition-opacity group-hover:opacity-100"
+                    style={{ color: accent }}
+                  >
                     View legacy →
                   </span>
                 </div>

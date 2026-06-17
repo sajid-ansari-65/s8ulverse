@@ -32,7 +32,7 @@ export function ProfileTabs({ tabs }: { tabs: ProfileTab[] }) {
             >
               <span
                 className={`block font-mono text-[10px] tracking-[0.22em] transition-colors ${
-                  on ? 'text-ember' : 'text-faint'
+                  on ? 'text-accent' : 'text-faint'
                 }`}
               >
                 {String(i + 1).padStart(2, '0')}
@@ -47,7 +47,7 @@ export function ProfileTabs({ tabs }: { tabs: ProfileTab[] }) {
               {on && (
                 <motion.span
                   layoutId="profile-tab-underline"
-                  className="absolute -bottom-px left-0 right-0 h-0.5 bg-ember"
+                  className="absolute -bottom-px left-0 right-0 h-0.5 bg-accent"
                   transition={{ type: 'spring', stiffness: 400, damping: 34 }}
                 />
               )}

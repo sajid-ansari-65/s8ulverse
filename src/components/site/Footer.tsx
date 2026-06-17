@@ -58,7 +58,7 @@ export function SiteFooter({ nav, site }: { nav?: NavData; site?: SiteSettings }
                         href={l.href}
                         target={isExternal(l.href) ? '_blank' : undefined}
                         rel={isExternal(l.href) ? 'noopener noreferrer' : undefined}
-                        className="text-sm text-bone-dim transition-colors hover:text-ember"
+                        className="text-sm text-bone-dim transition-colors hover:text-accent"
                       >
                         {l.label}
                       </Link>
@@ -80,7 +80,7 @@ export function SiteFooter({ nav, site }: { nav?: NavData; site?: SiteSettings }
                         href={s.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-bone-dim transition-colors hover:text-ember"
+                        className="text-sm text-bone-dim transition-colors hover:text-accent"
                       >
                         {s.platform} ↗
                       </a>
@@ -92,7 +92,12 @@ export function SiteFooter({ nav, site }: { nav?: NavData; site?: SiteSettings }
           </div>
 
           <div className="mt-14 flex flex-col gap-4 border-t border-line pt-8 font-mono text-[11px] uppercase tracking-[0.18em] text-faint sm:flex-row sm:items-center sm:justify-between">
-            <span>© {new Date().getFullYear()} {copyrightName}</span>
+            <span className="flex items-center gap-4">
+              © {new Date().getFullYear()} {copyrightName}
+              <Link href="/privacy" className="transition-colors hover:text-accent">
+                Privacy
+              </Link>
+            </span>
             <span className="text-bone-dim">{tagline}</span>
             <span>{location}</span>
           </div>
