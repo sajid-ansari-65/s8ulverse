@@ -47,11 +47,60 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }]
   },
-  webpack: (webpackConfig) => {
+  webpack: (webpackConfig, { webpack, isServer }) => {
     webpackConfig.resolve.extensionAlias = {
       '.cjs': ['.cts', '.cjs'],
       '.js': ['.ts', '.tsx', '.js', '.jsx'],
       '.mjs': ['.mts', '.mjs'],
+    }
+
+    // Payload's safeFetch + the Vercel Blob client upload handler pull in `undici`,
+    // which imports Node builtins via the `node:` URI scheme (node:assert,
+    // node:buffer, worker_threads, …). Webpack can't resolve the `node:` scheme,
+    // so the build fails. Strip the prefix so the builtins resolve…
+    webpackConfig.plugins.push(
+      new webpack.NormalModuleReplacementPlugin(/^node:/, (resource: { request: string }) => {
+        resource.request = resource.request.replace(/^node:/, '')
+      }),
+    )
+
+    // …and on the CLIENT bundle, cut the whole server-only chain out. The Vercel
+    // Blob *client* upload handler pulls in payload's safeFetch → undici (a Node
+    // HTTP client) which needs Node builtins. Client uploads are disabled, so this
+    // never runs in the browser — alias undici to an empty module and stub the
+    // Node-only builtins so the bundle just *resolves* at build time.
+    if (!isServer) {
+      webpackConfig.resolve.alias = {
+        ...webpackConfig.resolve.alias,
+        undici: false,
+        // The Vercel Blob client upload handler imports the cloud-storage utils,
+        // which pull ALL of payload's server internals (file-type, dns, undici)
+        // into the browser bundle. Client uploads are disabled, so cut the whole
+        // package on the client — it's only used server-side.
+        '@payloadcms/plugin-cloud-storage': false,
+      }
+      webpackConfig.resolve.fallback = {
+        ...webpackConfig.resolve.fallback,
+        assert: false,
+        async_hooks: false,
+        buffer: false,
+        console: false,
+        crypto: false,
+        diagnostics_channel: false,
+        events: false,
+        fs: false,
+        http: false,
+        https: false,
+        net: false,
+        os: false,
+        path: false,
+        perf_hooks: false,
+        stream: false,
+        tls: false,
+        util: false,
+        worker_threads: false,
+        zlib: false,
+      }
     }
 
     return webpackConfig
