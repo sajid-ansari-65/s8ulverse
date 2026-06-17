@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { publicRead, contributorUp, editorUp } from '@/lib/access'
 
 // Uploads: org logos/banners, player avatars/banners, game art.
 // Replaces the planned Vercel Blob wiring — Payload gives uploads for free.
@@ -8,7 +9,10 @@ export const Media: CollectionConfig = {
     group: 'Admin',
   },
   access: {
-    read: () => true,
+    read: publicRead,
+    create: contributorUp,
+    update: contributorUp,
+    delete: editorUp,
   },
   fields: [
     {
@@ -17,5 +21,9 @@ export const Media: CollectionConfig = {
       required: true,
     },
   ],
-  upload: true,
+  // Restrict uploads to images (P7) — blocks non-image file types. A byte-size
+  // cap is a server/Next body-limit concern (deploy-time), not an upload option.
+  upload: {
+    mimeTypes: ['image/*'],
+  },
 }

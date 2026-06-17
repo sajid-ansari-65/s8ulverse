@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { publicRead, editorUp } from '@/lib/access'
 
 // Fixtures for the EWC 2026 (and future events) schedule rail.
 export const Matches: CollectionConfig = {
@@ -9,7 +10,10 @@ export const Matches: CollectionConfig = {
     defaultColumns: ['opponent', 'competition', 'status', 'startsAt'],
   },
   access: {
-    read: () => true,
+    read: publicRead,
+    create: editorUp,
+    update: editorUp,
+    delete: editorUp,
   },
   defaultSort: 'startsAt',
   fields: [

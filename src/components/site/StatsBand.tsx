@@ -10,14 +10,14 @@ type Stat = { label: string; value: number; compact?: boolean; override?: string
 export function StatsBand({
   members,
   orgs,
-  games,
+  titles,
   reach,
   labels,
   overrides,
 }: {
   members: number
   orgs: number
-  games: number
+  titles: number
   reach: number
   labels: { members: string; orgs: string; titles: string; reach: string }
   overrides?: { members?: string; orgs?: string; titles?: string; reach?: string }
@@ -25,7 +25,7 @@ export function StatsBand({
   const stats: Stat[] = [
     { label: labels.members, value: members, override: overrides?.members },
     { label: labels.orgs, value: orgs, override: overrides?.orgs },
-    { label: labels.titles, value: games, override: overrides?.titles },
+    { label: labels.titles, value: titles, override: overrides?.titles },
     { label: labels.reach, value: reach, compact: true, override: overrides?.reach },
   ]
 

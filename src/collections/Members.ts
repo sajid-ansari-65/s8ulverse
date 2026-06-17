@@ -1,4 +1,6 @@
 import type { CollectionConfig } from 'payload'
+import { publicRead, contributorUp, editorUp } from '@/lib/access'
+import { cleanupMemberRefs } from '@/lib/integrity'
 
 // The central entity — players, creators, coaches, owners. Fields are grouped
 // into admin tabs (Profile / Social presence / Career / SEO). Tabs are
@@ -12,7 +14,15 @@ export const Members: CollectionConfig = {
     defaultColumns: ['ign', 'realName', 'role', 'org', 'isVerified'],
   },
   access: {
-    read: () => true,
+    read: publicRead,
+    create: contributorUp,
+    update: contributorUp,
+    delete: editorUp,
+  },
+  hooks: {
+    // Payload has no DB cascade — prune this member's tenures + any stale id
+    // refs in Achievements/Brands when the member is deleted.
+    afterDelete: [cleanupMemberRefs],
   },
   fields: [
     {
@@ -46,12 +56,13 @@ export const Members: CollectionConfig = {
                   name: 'role',
                   type: 'select',
                   required: true,
-                  admin: { width: '50%' },
+                  admin: { width: '50%', description: 'Current/primary role. Role per stint lives on each Tenure.' },
                   options: [
                     { label: 'Player', value: 'PLAYER' },
                     { label: 'Creator', value: 'CREATOR' },
                     { label: 'Coach', value: 'COACH' },
                     { label: 'Analyst', value: 'ANALYST' },
+                    { label: 'Manager', value: 'MANAGER' },
                     { label: 'Owner', value: 'OWNER' },
                   ],
                 },
@@ -60,7 +71,7 @@ export const Members: CollectionConfig = {
                   type: 'relationship',
                   relationTo: 'organizations',
                   required: true,
-                  admin: { width: '50%' },
+                  admin: { width: '50%', description: 'Current/primary org. Full history lives under Affiliations.' },
                 },
               ],
             },
@@ -78,13 +89,6 @@ export const Members: CollectionConfig = {
             },
             { name: 'bio', type: 'textarea' },
             {
-              name: 'teams',
-              type: 'relationship',
-              relationTo: 'teams',
-              hasMany: true,
-              admin: { description: 'Squads this member is part of.' },
-            },
-            {
               type: 'row',
               fields: [
                 { name: 'country', type: 'text', defaultValue: 'IN', admin: { width: '34%' } },
@@ -92,7 +96,29 @@ export const Members: CollectionConfig = {
                 { name: 'isActive', type: 'checkbox', defaultValue: true, admin: { width: '33%' } },
               ],
             },
-            { name: 'joinedAt', type: 'date', admin: { description: 'Joined the S8UL family on…' } },
+            { name: 'joinedAt', type: 'date', admin: { description: 'Joined the S8UL FAMILY on… (family-level; per-org dates live on Tenures).' } },
+          ],
+        },
+        {
+          label: 'Affiliations',
+          description: 'Org history (tenures) + current squads. Tenures power the legacy rosters.',
+          fields: [
+            {
+              name: 'tenures',
+              type: 'join',
+              collection: 'tenures',
+              on: 'member',
+              admin: {
+                description: 'Each stint at a family org — entry/exit, role, founding. Add a row per org/spell.',
+              },
+            },
+            {
+              name: 'teams',
+              type: 'relationship',
+              relationTo: 'teams',
+              hasMany: true,
+              admin: { description: 'Current squads (quick display). Historical squads live on each tenure.' },
+            },
           ],
         },
         {

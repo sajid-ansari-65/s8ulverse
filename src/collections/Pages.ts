@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { pageBlocks } from '../blocks/pageBlocks'
+import { publicRead, editorUp } from '@/lib/access'
 
 // Slugs owned by real code routes — an admin Page can't shadow these (the static
 // route wins, so the page would be unreachable). Block them at the source.
@@ -18,7 +19,10 @@ export const Pages: CollectionConfig = {
     description: 'Custom pages you can create without code. They live at /your-slug.',
   },
   access: {
-    read: () => true,
+    read: publicRead,
+    create: editorUp,
+    update: editorUp,
+    delete: editorUp,
   },
   fields: [
     { name: 'title', type: 'text', required: true },

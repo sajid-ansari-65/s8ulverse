@@ -9,10 +9,12 @@ import { getPayloadClient } from '@/lib/payload'
 
 const STATS: { label: string; slug: CollectionSlug; accent?: boolean }[] = [
   { label: 'Members', slug: 'members', accent: true },
+  { label: 'Tenures', slug: 'tenures' },
   { label: 'Organizations', slug: 'organizations' },
   { label: 'Teams', slug: 'teams' },
   { label: 'Matches', slug: 'matches' },
   { label: 'Achievements', slug: 'achievements' },
+  { label: 'Brands', slug: 'brands' },
   { label: 'Founders', slug: 'founders' },
   { label: 'Pages', slug: 'pages' },
   { label: 'Media', slug: 'media' },

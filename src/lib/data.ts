@@ -1,5 +1,15 @@
 import { getPayloadClient } from './payload'
-import { asOrg, mediaUrl, type Member, type Org } from './types'
+import {
+  asOrg,
+  mediaUrl,
+  type Achievement,
+  type Brand,
+  type Member,
+  type Org,
+  type RosterMember,
+  type Tenure,
+} from './types'
+import { buildRoster } from './roster'
 import { getLiveStatus, getYouTube, type YtData, type YtVideo } from './youtube'
 
 // All public reads go through Payload's Local API. Cache-tag invalidation
@@ -15,6 +25,17 @@ export async function getAllOrgs(): Promise<Org[]> {
     limit: 100,
   })
   return docs as unknown as Org[]
+}
+
+export async function getOrgBySlug(slug: string): Promise<Org | null> {
+  const payload = await getPayloadClient()
+  const { docs } = await payload.find({
+    collection: 'organizations',
+    where: { slug: { equals: slug } },
+    depth: 1, // populate logo + banner for the org detail header
+    limit: 1,
+  })
+  return (docs[0] as unknown as Org) ?? null
 }
 
 export async function getFeaturedMembers(): Promise<Member[]> {
@@ -90,6 +111,110 @@ export async function getAchievements() {
   }>
 }
 
+// ─── Tenures / legacy rosters ───────────────────────────────────────────────
+// NOTE (runtime-verify): the relationship hasMany filters below use the `in`
+// operator (`members: { in: [id] }`, `orgs: { in: [orgId] }`) — the expected
+// Payload operator. Confirm against live data when the seed lands; if a hasMany
+// needs `contains` instead, only these where-clauses change.
+
+// Full roster history for an org (alumni included — no isActive filter). Merges
+// each member's stints into one RosterMember (rejoins collapsed).
+export async function getOrgRoster(orgId: string | number): Promise<RosterMember[]> {
+  const payload = await getPayloadClient()
+  const { docs } = await payload.find({
+    collection: 'tenures',
+    where: { org: { equals: orgId } },
+    depth: 2, // populate member (+avatar), team, org
+    limit: 1000,
+    sort: 'joinedAt',
+  })
+  return buildRoster(docs as unknown as Tenure[])
+}
+
+// A single member's tenures across ALL orgs — the profile-page career timeline.
+export async function getMemberTenures(memberId: string | number): Promise<Tenure[]> {
+  const payload = await getPayloadClient()
+  const { docs } = await payload.find({
+    collection: 'tenures',
+    where: { member: { equals: memberId } },
+    depth: 2,
+    limit: 1000,
+    sort: 'joinedAt',
+  })
+  return docs as unknown as Tenure[]
+}
+
+// ─── Achievements (scoped) ──────────────────────────────────────────────────
+
+// Every honour linked to an org — feeds OrgHonours AND the roster-card honour map
+// (fetched once, mapped in-app via memberHonourMap — no N+1).
+export async function getOrgAchievements(orgId: string | number): Promise<Achievement[]> {
+  const payload = await getPayloadClient()
+  const { docs } = await payload.find({
+    collection: 'achievements',
+    where: { org: { equals: orgId } },
+    sort: '-sortKey',
+    depth: 1, // members / game / team
+    limit: 200,
+  })
+  return docs as unknown as Achievement[]
+}
+
+// Every honour a member is credited on (all orgs) — player page, split by type.
+export async function getMemberAchievements(memberId: string | number): Promise<Achievement[]> {
+  const payload = await getPayloadClient()
+  const { docs } = await payload.find({
+    collection: 'achievements',
+    where: { members: { in: [memberId] } },
+    sort: '-sortKey',
+    depth: 1,
+    limit: 200,
+  })
+  return docs as unknown as Achievement[]
+}
+
+// ─── Brands / partnerships ──────────────────────────────────────────────────
+// Map the stored ACTIVE/PAST enum to the friendly view-model `status`.
+function mapBrand(d: unknown): Brand {
+  const raw = d as { status?: unknown }
+  return { ...(d as Brand), status: raw.status === 'PAST' ? 'Past' : 'Active' }
+}
+
+export async function getBrands(): Promise<Brand[]> {
+  const payload = await getPayloadClient()
+  const { docs } = await payload.find({
+    collection: 'brands',
+    sort: ['-featured', '-sortKey'],
+    depth: 1, // logo, orgs, members, team, game
+    limit: 200,
+  })
+  return docs.map(mapBrand)
+}
+
+export async function getBrandsByOrg(orgId: string | number): Promise<Brand[]> {
+  const payload = await getPayloadClient()
+  const { docs } = await payload.find({
+    collection: 'brands',
+    where: { orgs: { in: [orgId] } },
+    sort: ['-featured', '-sortKey'],
+    depth: 1,
+    limit: 200,
+  })
+  return docs.map(mapBrand)
+}
+
+export async function getMemberBrands(memberId: string | number): Promise<Brand[]> {
+  const payload = await getPayloadClient()
+  const { docs } = await payload.find({
+    collection: 'brands',
+    where: { members: { in: [memberId] } },
+    sort: ['-featured', '-sortKey'],
+    depth: 1,
+    limit: 200,
+  })
+  return docs.map(mapBrand)
+}
+
 export async function getMemberBySlug(slug: string): Promise<Member | null> {
   const payload = await getPayloadClient()
   const { docs } = await payload.find({
@@ -127,20 +252,29 @@ export async function getAllMemberSlugs(): Promise<string[]> {
 export async function getRosterStats(): Promise<{
   members: number
   orgs: number
-  games: number
+  titles: number
   reach: number
 }> {
   const payload = await getPayloadClient()
-  const [orgs, games, members] = await Promise.all([
+  const [orgs, titles, members] = await Promise.all([
     payload.count({ collection: 'organizations' }),
-    payload.count({ collection: 'games' }),
-    payload.find({ collection: 'members', depth: 0, limit: 1000, select: { socials: true } }),
+    // "Titles" = team honours won (F3 — previously a games count mislabelled "Titles").
+    payload.count({ collection: 'achievements', where: { type: { equals: 'Team' } } }),
+    // Current roster only — the seeded alumni must not skew "Players & creators" or
+    // "Combined reach" (F3). Manual StatsBand overrides still win.
+    payload.find({
+      collection: 'members',
+      where: { isActive: { equals: true } },
+      depth: 0,
+      limit: 1000,
+      select: { socials: true },
+    }),
   ])
   const reach = members.docs.reduce((sum, m) => {
     const socials = (m as { socials?: Array<{ followers?: number | null }> }).socials
     return sum + (socials?.[0]?.followers ?? 0)
   }, 0)
-  return { orgs: orgs.totalDocs, games: games.totalDocs, members: members.totalDocs, reach }
+  return { orgs: orgs.totalDocs, titles: titles.totalDocs, members: members.totalDocs, reach }
 }
 
 export async function getAllOrgSlugs(): Promise<string[]> {

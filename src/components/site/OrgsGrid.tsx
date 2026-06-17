@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Reveal } from '@/components/motion/Reveal'
 import { TiltCard } from '@/components/motion/TiltCard'
 import { Pill } from '@/components/ui'
@@ -21,7 +23,7 @@ export function OrgsGrid({ orgs }: { orgs: Org[] }) {
         const featured = i === 0
         return (
           <Reveal key={org.id} delay={i * 0.06} className={featured ? 'lg:col-span-2' : ''}>
-            <div className="relative h-full">
+            <Link href={`/orgs/${org.slug}`} className="group relative block h-full">
               {featured && (
                 <div
                   aria-hidden
@@ -59,9 +61,12 @@ export function OrgsGrid({ orgs }: { orgs: Org[] }) {
                 <div className="mt-6 flex items-center gap-4 font-mono text-[11px] uppercase tracking-[0.18em] text-faint">
                   {org.shortName && <span>{org.shortName}</span>}
                   {org.founded && <span>Est. {org.founded}</span>}
+                  <span className="text-ember opacity-0 transition-opacity group-hover:opacity-100">
+                    View legacy →
+                  </span>
                 </div>
               </TiltCard>
-            </div>
+            </Link>
           </Reveal>
         )
       })}

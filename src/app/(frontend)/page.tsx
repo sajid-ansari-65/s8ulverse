@@ -127,7 +127,7 @@ export default async function HomePage() {
       <StatsBand
         members={stats.members}
         orgs={stats.orgs}
-        games={stats.games}
+        titles={stats.titles}
         reach={stats.reach}
         labels={{
           members: home.statMembersLabel,

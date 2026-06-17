@@ -1,4 +1,6 @@
 import type { CollectionConfig } from 'payload'
+import { publicRead, editorUp } from '@/lib/access'
+import { cleanupOrgRefs } from '@/lib/integrity'
 
 // Maps Prisma `Organization` (S8UL, SouL, 8Bit, 8Bit Creative).
 export const Organizations: CollectionConfig = {
@@ -10,7 +12,14 @@ export const Organizations: CollectionConfig = {
     defaultColumns: ['name', 'slug', 'isVerified'],
   },
   access: {
-    read: () => true,
+    read: publicRead,
+    create: editorUp,
+    update: editorUp,
+    delete: editorUp,
+  },
+  hooks: {
+    // No DB cascade — delete dependent tenures/teams, scrub achievement/brand refs.
+    afterDelete: [cleanupOrgRefs],
   },
   fields: [
     {
@@ -58,6 +67,15 @@ export const Organizations: CollectionConfig = {
         },
         { name: 'isVerified', type: 'checkbox', defaultValue: false, admin: { width: '50%' } },
       ],
+    },
+    {
+      // Read-only view of every stint at this org (virtual — no column). Lets an
+      // editor see/manage the org's full roster history from its own screen.
+      name: 'roster',
+      type: 'join',
+      collection: 'tenures',
+      on: 'org',
+      admin: { description: 'Everyone who has had a stint at this org (from Tenures).' },
     },
   ],
 }

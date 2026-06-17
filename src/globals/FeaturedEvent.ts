@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { publicRead, editorUp } from '@/lib/access'
 
 // The "Featured Event" band (currently EWC 2026). Fixtures live in the Matches
 // collection; this global controls the surrounding copy + countdown target.
@@ -6,7 +7,7 @@ export const FeaturedEvent: GlobalConfig = {
   slug: 'featured-event',
   label: 'Featured Event',
   admin: { group: 'Settings', description: 'The headline event band (countdown + copy).' },
-  access: { read: () => true },
+  access: { read: publicRead, update: editorUp },
   fields: [
     {
       type: 'row',
