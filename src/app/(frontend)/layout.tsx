@@ -6,6 +6,8 @@ import React from 'react'
 import { Atmosphere } from '@/components/site/Atmosphere'
 import { Intro } from '@/components/site/Intro'
 import { ScrollProgress } from '@/components/site/ScrollProgress'
+import { SmoothScroll } from '@/components/motion/SmoothScroll'
+import { Cursor } from '@/components/motion/Cursor'
 import { SiteNav } from '@/components/site/Nav'
 import { SiteFooter } from '@/components/site/Footer'
 import { getNavigation, getSiteSettings } from '@/lib/data'
@@ -83,6 +85,8 @@ export default async function FrontendLayout({ children }: { children: React.Rea
         className="relative min-h-screen overflow-x-hidden bg-ink font-sans text-bone antialiased selection:bg-accent selection:text-ink"
         suppressHydrationWarning
       >
+        <SmoothScroll />
+        <Cursor />
         <Intro wordmark={site.wordmarkSuffix} tagline={site.tagline.replace(/\.$/, '')} />
         <Atmosphere />
         <ScrollProgress />

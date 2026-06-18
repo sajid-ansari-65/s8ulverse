@@ -3,6 +3,7 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'motion/react'
 
+import { Magnetic } from '@/components/motion/Magnetic'
 import type { HomepageContent } from '@/lib/data'
 
 type HeroContent = Pick<
@@ -110,13 +111,15 @@ export function Hero({
           className="mt-8 flex max-w-2xl flex-col gap-6 sm:flex-row sm:items-end sm:justify-between"
         >
           <p className="text-lg text-bone-dim">{content.heroSubtitle}</p>
-          <a
-            href={content.heroCtaHref}
-            className="frame group inline-flex shrink-0 items-center gap-3 px-5 py-3 font-mono text-[11px] uppercase tracking-[0.2em] text-bone transition-colors hover:text-accent"
-          >
-            {content.heroCtaLabel}
-            <span className="transition-transform group-hover:translate-x-1">→</span>
-          </a>
+          <Magnetic strength={0.5}>
+            <a
+              href={content.heroCtaHref}
+              className="frame group inline-flex shrink-0 items-center gap-3 px-5 py-3 font-mono text-[11px] uppercase tracking-[0.2em] text-bone transition-colors hover:text-accent"
+            >
+              {content.heroCtaLabel}
+              <span className="transition-transform group-hover:translate-x-1">→</span>
+            </a>
+          </Magnetic>
         </motion.div>
       </motion.div>
 

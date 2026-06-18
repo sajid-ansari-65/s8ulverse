@@ -56,8 +56,8 @@ function Row({ items }: { items: TickerItem[] }) {
 export function MatchTicker({ items }: { items: TickerItem[] }) {
   if (!items.length) return null
   return (
-    <div className="relative border-y border-line bg-ink-2/60 py-3 backdrop-blur mask-fade-x">
-      <div className="flex w-max animate-marquee items-center">
+    <div className="group relative border-y border-line bg-ink-2/60 py-3 backdrop-blur mask-fade-x">
+      <div className="flex w-max animate-marquee items-center group-hover:[animation-play-state:paused]">
         <Row items={items} />
         <Row items={items} />
       </div>

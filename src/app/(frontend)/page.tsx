@@ -10,7 +10,9 @@ import { TrophyWall } from '@/components/site/TrophyWall'
 import { KitShowcase } from '@/components/site/KitShowcase'
 import { OrgsGrid } from '@/components/site/OrgsGrid'
 import { RosterGrid } from '@/components/site/RosterGrid'
+import { Magnetic } from '@/components/motion/Magnetic'
 import { Reveal } from '@/components/motion/Reveal'
+import { DrawLine } from '@/components/motion/DrawLine'
 import { Container } from '@/components/ui'
 import { JsonLd } from '@/components/seo/JsonLd'
 import {
@@ -43,7 +45,7 @@ function TeaserHeading({
   cta: string
 }) {
   return (
-    <div className="flex items-end justify-between gap-6 border-b border-line pb-5">
+    <div className="relative flex items-end justify-between gap-6 border-b border-line pb-5">
       <div>
         <p className="font-mono text-[11px] uppercase tracking-kicker text-accent">{kicker}</p>
         <h2 className="display mt-3 text-4xl text-bone sm:text-6xl">{title}</h2>
@@ -55,6 +57,7 @@ function TeaserHeading({
         {cta}{' '}
         <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
       </Link>
+      <DrawLine className="absolute -bottom-px left-0 w-24" />
     </div>
   )
 }
@@ -213,18 +216,22 @@ export default async function HomePage() {
               {home.ctaTitle}
             </h2>
             <div className="relative mt-10 flex flex-wrap items-center justify-center gap-4 font-mono text-[11px] uppercase tracking-[0.2em]">
-              <Link
-                href={home.ctaPrimaryHref}
-                className="rounded-full bg-accent px-6 py-3 text-ink transition-transform hover:scale-105"
-              >
-                {home.ctaPrimaryLabel}
-              </Link>
-              <Link
-                href={home.ctaSecondaryHref}
-                className="rounded-full border border-line px-6 py-3 text-bone-dim transition-colors hover:text-bone"
-              >
-                {home.ctaSecondaryLabel}
-              </Link>
+              <Magnetic strength={0.5}>
+                <Link
+                  href={home.ctaPrimaryHref}
+                  className="inline-block rounded-full bg-accent px-6 py-3 text-ink transition-transform hover:scale-[1.03]"
+                >
+                  {home.ctaPrimaryLabel}
+                </Link>
+              </Magnetic>
+              <Magnetic strength={0.4}>
+                <Link
+                  href={home.ctaSecondaryHref}
+                  className="inline-block rounded-full border border-line px-6 py-3 text-bone-dim transition-colors hover:border-accent/50 hover:text-bone"
+                >
+                  {home.ctaSecondaryLabel}
+                </Link>
+              </Magnetic>
             </div>
           </div>
         </Reveal>
