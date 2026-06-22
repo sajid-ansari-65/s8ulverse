@@ -35,7 +35,7 @@ export function TrophyWall({
 
       <div className="mt-10 grid gap-5 lg:grid-cols-[1.15fr_1fr]">
         {/* HERO TROPHY */}
-        <Reveal>
+        <Reveal scale blur>
           <div className="frame relative h-full overflow-hidden rounded-3xl border border-accent-metal/25 bg-raise/40 p-8 sm:p-10">
             <div aria-hidden className="kit-mesh pointer-events-none absolute inset-0 opacity-60" />
             <div

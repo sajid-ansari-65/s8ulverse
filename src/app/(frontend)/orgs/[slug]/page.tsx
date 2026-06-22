@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { Reveal } from '@/components/motion/Reveal'
+import { Parallax } from '@/components/motion/Parallax'
 import { LegacyRoster } from '@/components/site/LegacyRoster'
 import { OrgHonours } from '@/components/site/OrgHonours'
 import { JsonLd } from '@/components/seo/JsonLd'
@@ -126,17 +127,21 @@ export default async function OrgPage({ params }: { params: Promise<{ slug: stri
       {/* CINEMATIC HEADER */}
       <header className="relative min-h-[72svh] w-full overflow-hidden">
         <div className="absolute inset-0">
-          {banner ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={banner} alt="" className="h-full w-full object-cover" />
-          ) : (
-            <div
-              className="h-full w-full"
-              style={{
-                background: `radial-gradient(80% 80% at 70% 10%, ${accent}33, transparent 55%), radial-gradient(60% 60% at 0% 100%, ${accent}22, transparent 50%), #0a0a0e`,
-              }}
-            />
-          )}
+          {/* Only the backdrop image drifts (parallax); overlays stay fixed so the
+              text stays readable and edges never show. scale-110 = travel headroom. */}
+          <Parallax speed={50} className="absolute inset-0">
+            {banner ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={banner} alt="" className="h-full w-full scale-110 object-cover" />
+            ) : (
+              <div
+                className="h-full w-full scale-110"
+                style={{
+                  background: `radial-gradient(80% 80% at 70% 10%, ${accent}33, transparent 55%), radial-gradient(60% 60% at 0% 100%, ${accent}22, transparent 50%), #0a0a0e`,
+                }}
+              />
+            )}
+          </Parallax>
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-ink/20" />
           <div className="absolute inset-0 bg-gradient-to-r from-ink/80 via-transparent to-transparent" />
           <div aria-hidden className="jersey-stripe absolute inset-0 opacity-30 mask-fade-b" />

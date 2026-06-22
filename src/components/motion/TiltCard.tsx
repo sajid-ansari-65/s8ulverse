@@ -1,7 +1,15 @@
 'use client'
 
 import { useRef, type ReactNode } from 'react'
-import { motion, useMotionTemplate, useMotionValue, useSpring } from 'motion/react'
+import {
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+} from 'motion/react'
+
+import { SPRING } from '@/lib/motion'
 
 // 3D spotlight card: tilts toward the cursor, with a moving sheen and an
 // accent-tinted glow that tracks the pointer. The whole surface stays one
@@ -17,9 +25,10 @@ export function TiltCard({
   className?: string
   max?: number
 }) {
+  const reduced = useReducedMotion()
   const ref = useRef<HTMLDivElement>(null)
-  const rx = useSpring(useMotionValue(0), { stiffness: 150, damping: 18 })
-  const ry = useSpring(useMotionValue(0), { stiffness: 150, damping: 18 })
+  const rx = useSpring(useMotionValue(0), SPRING.responsive)
+  const ry = useSpring(useMotionValue(0), SPRING.responsive)
   const gx = useMotionValue(50)
   const gy = useMotionValue(50)
   const glX = useMotionTemplate`${gx}%`
@@ -43,6 +52,12 @@ export function TiltCard({
     ry.set(0)
     gx.set(50)
     gy.set(50)
+  }
+
+  // Reduced-motion: drop the tilt, glow-tracking and sheen entirely — just the
+  // static card. (Hooks above still run so call order stays stable.)
+  if (reduced) {
+    return <div className={`relative ${className}`}>{children}</div>
   }
 
   return (

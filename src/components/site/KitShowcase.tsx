@@ -1,4 +1,4 @@
-import { Reveal } from '@/components/motion/Reveal'
+import { Reveal, RevealItem, RevealStagger } from '@/components/motion/Reveal'
 import { TiltCard } from '@/components/motion/TiltCard'
 import { Container, SectionHeading } from '@/components/ui'
 
@@ -71,9 +71,12 @@ export function KitShowcase({
         <SectionHeading kicker={kicker} title={title} index={`${kits.length} kits`} />
       </Reveal>
 
-      <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <RevealStagger
+        stagger={0.1}
+        className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+      >
         {kits.map((kit, i) => (
-          <Reveal key={kit.org + i} delay={(i % 3) * 0.06}>
+          <RevealItem key={kit.org + i} className="h-full">
             <TiltCard
               accent={kit.primary}
               className="group relative h-full overflow-hidden rounded-2xl border border-line bg-raise/40 p-8"
@@ -95,9 +98,9 @@ export function KitShowcase({
                 </div>
               </div>
             </TiltCard>
-          </Reveal>
+          </RevealItem>
         ))}
-      </div>
+      </RevealStagger>
 
       {/* SPONSOR WALL */}
       {sponsors.length > 0 && (
