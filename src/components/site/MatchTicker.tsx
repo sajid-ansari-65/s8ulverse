@@ -56,8 +56,13 @@ function Row({ items }: { items: TickerItem[] }) {
 export function MatchTicker({ items }: { items: TickerItem[] }) {
   if (!items.length) return null
   return (
+<<<<<<< Updated upstream
     <div className="relative border-y border-line bg-ink-2/60 py-3 backdrop-blur mask-fade-x">
       <div className="flex w-max animate-marquee items-center">
+=======
+    <div className="group relative overflow-hidden border-y border-line bg-ink-2/60 py-3 backdrop-blur mask-fade-x">
+      <div className="flex w-max animate-marquee items-center group-hover:[animation-play-state:paused]">
+>>>>>>> Stashed changes
         <Row items={items} />
         <Row items={items} />
       </div>

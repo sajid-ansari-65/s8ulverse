@@ -50,3 +50,5 @@ packages/db/prisma/*.db-journal
 /media
 /public/media
 .env*
+db-backup/
+seed-assets/exportDB/

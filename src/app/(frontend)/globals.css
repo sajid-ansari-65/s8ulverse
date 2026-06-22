@@ -18,6 +18,14 @@
 }
 
 @layer base {
+  /* Root-level horizontal-overflow guard. `clip` (not `hidden`) avoids creating a
+     scroll container, so it never breaks position:sticky or Lenis smooth scroll —
+     it just stops any stray wide child (e.g. a marquee) from widening the document
+     and triggering the mobile shrink-to-fit / horizontal-scroll bug. */
+  html {
+    overflow-x: clip;
+  }
+
   body {
     /* 2026/27 kit ambience — electric-blue glow top, faint iQOO-green spark */
     background-image:
