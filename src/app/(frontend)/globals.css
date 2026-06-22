@@ -239,6 +239,18 @@
   }
 }
 
+/* Custom cursor active (desktop, motion ok) — hide the native one. The component
+   only adds this class on fine pointers, so touch keeps its native cursor. */
+.has-custom-cursor,
+.has-custom-cursor a,
+.has-custom-cursor button,
+.has-custom-cursor [role='button'],
+.has-custom-cursor input,
+.has-custom-cursor textarea,
+.has-custom-cursor select {
+  cursor: none;
+}
+
 /* Respect reduced-motion: still themed, just calm. */
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee,

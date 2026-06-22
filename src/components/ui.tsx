@@ -1,5 +1,7 @@
 import * as React from 'react'
 
+import { DrawLine } from '@/components/motion/DrawLine'
+
 const cx = (...p: Array<string | false | null | undefined>) => p.filter(Boolean).join(' ')
 
 export function Container({
@@ -22,7 +24,7 @@ export function SectionHeading({
   index?: string
 }) {
   return (
-    <div className="flex items-end justify-between gap-6 border-b border-line pb-5">
+    <div className="relative flex items-end justify-between gap-6 border-b border-line pb-5">
       <div>
         <p className="font-mono text-[11px] uppercase tracking-kicker text-accent">{kicker}</p>
         <h2 className="display mt-3 text-4xl text-bone sm:text-6xl">{title}</h2>
@@ -32,6 +34,7 @@ export function SectionHeading({
           {index}
         </span>
       )}
+      <DrawLine className="absolute -bottom-px left-0 w-24" />
     </div>
   )
 }
