@@ -63,6 +63,15 @@ export async function generateMetadata(): Promise<Metadata> {
         'max-video-preview': -1,
       },
     },
+    // Search-engine ownership verification (env-driven — emits nothing until set).
+    // Google: Search Console → add property → "HTML tag" → paste token here.
+    // Bing:   Bing Webmaster Tools → verify → "Meta tag" → msvalidate.01 token.
+    verification: {
+      google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+      other: process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION
+        ? { 'msvalidate.01': process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION }
+        : {},
+    },
     formatDetection: { telephone: false, email: false, address: false },
   }
 }
